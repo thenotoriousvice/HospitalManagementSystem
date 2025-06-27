@@ -1,0 +1,629 @@
+﻿@model HospitalManagementSystem.ViewModels.PatientDetailsViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #E6F0FF;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(173, 216, 255, 0.8), rgba(144, 202, 249, 0.8)), url('https://placehold.co/1200x400/A8D8FF/') no-repeat center center/cover;
+            color: #333;
+            padding: 45px 0;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 1s ease-out;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(240, 248, 255, 0.3);
+            z-index: 1;
+        }
+
+        .hero-section .content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section h1 {
+            font-size: 3.0rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+            color: #0047AB;
+        }
+
+        .hero-section p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            max-width: 700px;
+            margin: 0 auto 15px auto;
+            color: #212529;
+        }
+
+        .card {
+            border-radius: 18px;
+            box-shadow: 0 6px 12px rgba(0,0,0,.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #D1E5FF;
+        }
+
+            .card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 16px rgba(0,0,0,.1);
+            }
+
+        .card-header {
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            background: linear-gradient(90deg, #D1E5FF, #A8D8FF);
+            color: #0047AB;
+            font-weight: bold;
+            border-bottom: none;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+            .card-header h4 {
+                margin-bottom: 0;
+                font-size: 1.75rem;
+            }
+
+        .nav-tabs {
+            border-bottom: 2px solid #66A3FF;
+            margin-bottom: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .nav-link {
+            font-weight: bold;
+            color: #495057;
+            border-radius: 8px;
+            margin: 0 5px;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            background-color: transparent;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .nav-link:hover {
+                color: #007BFF;
+                background-color: #E6F7FF;
+            }
+
+            .nav-link.active {
+                background-color: #A8D8FF !important;
+                color: #0047AB !important;
+                border-color: #A8D8FF #A8D8FF #fff !important;
+                box-shadow: 0 3px 8px rgba(168,216,255,0.3);
+                transform: translateY(-2px);
+            }
+
+            .nav-link i {
+                margin-right: 8px;
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #66A3FF, #3385FF);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(102,163,255,0.2);
+            color: white;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(45deg, #3385FF, #005CE6);
+                box-shadow: 0 6px 12px rgba(102,163,255,0.3);
+                transform: translateY(-2px);
+            }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #FF6B6B, #FF4040);
+            border: none;
+            border-radius: 30px;
+            padding: 12px 28px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(255,107,107,0.2);
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: linear-gradient(45deg, #FF4040, #CC0000);
+                box-shadow: 0 6px 12px rgba(255,107,107,0.3);
+                transform: translateY(-2px);
+            }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #D3D3D3, #A9A9A9);
+            border: none;
+            border-radius: 30px;
+            padding: 12px 28px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(211,211,211,0.2);
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background: linear-gradient(45deg, #A9A9A9, #808080);
+                box-shadow: 0 6px 12px rgba(211,211,211,0.3);
+                transform: translateY(-2px);
+            }
+
+        .btn-light {
+            background-color: #f8f9fa !important;
+            color: #212529 !important;
+            border-color: #f8f9fa !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+            .btn-light:hover {
+                background-color: #e2e6ea !important;
+                border-color: #dae0e5 !important;
+                box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            }
+
+        .btn-info.text-white {
+            background: linear-gradient(45deg, #66A3FF, #3385FF);
+            border: none;
+            color: white !important;
+            box-shadow: 0 2px 5px rgba(102,163,255,0.2);
+        }
+
+            .btn-info.text-white:hover {
+                background: linear-gradient(45deg, #3385FF, #005CE6);
+                box-shadow: 0 4px 8px rgba(102,163,255,0.3);
+            }
+
+        .alert-warning {
+            border-radius: 12px;
+            background-color: #FFF3CD;
+            border-color: #FFEEDA;
+            color: #856404;
+            box-shadow: 0 4px 8px rgba(255,193,7,0.1);
+        }
+
+        .alert-info {
+            border-radius: 12px;
+            background-color: #D1E5FF;
+            border-color: #A8D8FF;
+            color: #0047AB;
+            box-shadow: 0 4px 8px rgba(168,216,255,0.1);
+        }
+
+        .section-title {
+            color: #0047AB;
+            font-weight: 600;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+
+            .section-title i {
+                margin-right: 12px;
+                font-size: 1.8em;
+                color: #3385FF;
+            }
+
+        .dl-horizontal dt {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .dl-horizontal dd {
+            margin-bottom: 10px;
+            color: #6c757d;
+        }
+
+        .list-group-item {
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background-color: #E6F0FF;
+            border: 1px solid #D1E5FF;
+        }
+
+        .badge {
+            padding: 0.6em 0.9em;
+            border-radius: 0.7rem;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-pill {
+            border-radius: 50rem;
+        }
+
+        .badge.bg-primary {
+            background-color: #A8D8FF !important;
+            color: #0047AB !important;
+        }
+
+        .badge.bg-success {
+            background-color: #81C784 !important;
+            color: white !important;
+        }
+
+        .badge.bg-warning {
+            background-color: #FFD54F !important;
+            color: #333 !important;
+        }
+
+        .badge.bg-danger {
+            background-color: #FF6B6B !important;
+            color: white !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-5">
+        @if (Model == null)
+        {
+            <div class="alert alert-warning text-center p-5 shadow-lg" role="alert">
+                <h4 class="alert-heading display-5"><i class="bi bi-exclamation-triangle-fill me-3"></i>Profile Not Found!</h4>
+                <p class="lead mt-3">It seems your patient profile could not be found. Let's get you set up to manage your healthcare details efficiently.</p>
+                <hr class="my-4">
+                <p class="mb-0">
+                    Please <a asp-action="CreateProfile" class="btn btn-warning btn-lg mt-3 shadow-sm">
+                        <i class="bi bi-person-plus-fill me-2"></i> Create Your Profile Now!
+                    </a> to get started.
+                </p>
+            </div>
+        }
+        else
+        {
+            <div class="hero-section">
+                <div class="content">
+                    <h1>Welcome, <span class="text-white">@Html.DisplayFor(model => model.Name)</span>!</h1>
+                    <p class="lead">Your personalized healthcare dashboard. Manage your details, appointments, and payments with ease.</p>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs nav-justified" id="myProfileTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#personalDetails" type="button" role="tab" aria-controls="personalDetails" aria-selected="true">
+                        <i class="bi bi-person-circle"></i> Personal Details
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="medical-tab" data-bs-toggle="tab" data-bs-target="#medicalInfo" type="button" role="tab" aria-controls="medicalInfo" aria-selected="false">
+                        <i class="bi bi-heart-pulse-fill"></i> Medical Info
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="appointments-tab" data-bs-toggle="tab" data-bs-target="#appointments" type="button" role="tab" aria-controls="appointments" aria-selected="false">
+                        <i class="bi bi-calendar-check-fill"></i> Appointments
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab" aria-controls="payments" aria-selected="false">
+                        <i class="bi bi-wallet-fill"></i> Payments
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myProfileTabContent">
+                <div class="tab-pane fade show active" id="personalDetails" role="tabpanel" aria-labelledby="details-tab">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h4 class="section-title"><i class="bi bi-info-circle-fill"></i>General Information</h4>
+                            <a asp-action="UpdateProfile" class="btn btn-primary btn-sm ms-auto">
+                                <i class="bi bi-pencil-fill me-2"></i> Edit Profile
+                            </a>
+                        </div>
+                        <div class="card-body p-4">
+                            <dl class="row dl-horizontal">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Name)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Name)</dd>
+
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.IdentityUserName)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.IdentityUserName)</dd>
+
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.DateOfBirth)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.DateOfBirth)</dd>
+
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Gender)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Gender)</dd>
+
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ContactNumber)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.ContactNumber)</dd>
+
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Address)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.Address)</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="medicalInfo" role="tabpanel" aria-labelledby="medical-tab">
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-header">
+                            <h4 class="section-title"><i class="bi bi-clipboard-pulse"></i>Medical History</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <dl class="row dl-horizontal">
+                                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.MedicalHistory)</dt>
+                                <dd class="col-sm-8">@Html.DisplayFor(model => model.MedicalHistory)</dd>
+                            </dl>
+                            <p class="text-muted mt-3 fst-italic">This section provides a summary of your medical background. For detailed records, please contact your healthcare provider.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="appointments" role="tabpanel" aria-labelledby="appointments-tab">
+                    <div class="d-flex justify-content-end mb-3">
+                        <a asp-controller="Appointments" asp-action="Create" class="btn btn-info text-white">
+                            <i class="bi bi-plus-circle-fill me-2"></i>Schedule New Appointment
+                        </a>
+                    </div>
+
+                    <ul class="nav nav-tabs nav-justified mb-3" id="appointmentSubTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="upcoming-appointments-tab" data-bs-toggle="tab" data-bs-target="#upcomingAppointments" type="button" role="tab" aria-controls="upcomingAppointments" aria-selected="true">
+                                <i class="bi bi-calendar-check"></i> Upcoming Appointments
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="past-appointments-tab" data-bs-toggle="tab" data-bs-target="#pastAppointments" type="button" role="tab" aria-controls="pastAppointments" aria-selected="false">
+                                <i class="bi bi-clock-history"></i> Past Appointments
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="appointmentSubTabContent">
+                        <div class="tab-pane fade" id="appointments" role="tabpanel" aria-labelledby="appointments-tab">
+                            <div class="d-flex justify-content-end mb-3">
+                                <a asp-controller="Appointments" asp-action="Create" class="btn btn-info text-white">
+                                    <i class="bi bi-plus-circle-fill me-2"></i>Schedule New Appointment
+                                </a>
+                            </div>
+
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header">
+                                    <h4 class="section-title"><i class="bi bi-calendar-check"></i>All Appointments</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    @if (Model.UpcomingAppointments != null && Model.UpcomingAppointments.Any())
+                                    {
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Time</th>
+                                                        <th>Doctor</th>
+                                                        <th>Department</th>
+                                                        <th>Reason</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var appointment in Model.UpcomingAppointments)
+                                                    {
+                                                        <tr>
+                                                            <td>@appointment.AppointmentDate.ToString("yyyy-MM-dd")</td>
+                                                            <td>@(appointment.AppointmentTime.HasValue ? new DateTime().Add(appointment.AppointmentTime.Value).ToString("hh:mm tt") : "Not Set")</td>
+                                                            <td>@(appointment.Doctor?.FullName ?? "N/A")</td>
+                                                            <td>@(appointment.Department?.Name ?? "N/A")</td>
+                                                            <td>@appointment.Reason</td>
+                                                            <td>
+                                                                @{
+                                                                    string badgeClass = "";
+                                                                    switch (appointment.Status)
+                                                                    {
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Pending:
+                                                                            badgeClass = "bg-warning"; break;
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Approved:
+                                                                            badgeClass = "bg-success"; break;
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Rejected:
+                                                                            badgeClass = "bg-danger"; break;
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Cancelled:
+                                                                            badgeClass = "bg-secondary"; break;
+                                                                        default:
+                                                                            badgeClass = "bg-info"; break;
+                                                                    }
+                                                                }
+                                                                <span class="badge @badgeClass">@appointment.Status.ToString()</span>
+                                                            </td>
+                                                            <td>
+                                                                @if (appointment.Status == HospitalManagementSystem.Repository.Models.AppointmentStatus.Pending || appointment.Status == HospitalManagementSystem.Repository.Models.AppointmentStatus.Approved)
+                                                                {
+                                                                    <form asp-controller="Appointments" asp-action="Cancel" method="post" class="d-inline">
+                                                                        <input type="hidden" name="id" value="@appointment.Id" />
+                                                                        <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to cancel this appointment?');">Cancel</button>
+                                                                    </form>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info text-center" role="alert">
+                                            <h5 class="alert-heading"><i class="bi bi-calendar-x-fill me-2"></i>No Appointments Found</h5>
+                                            <p>There are no appointments recorded for your profile.</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="pastAppointments" role="tabpanel" aria-labelledby="past-appointments-tab">
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header">
+                                    <h4 class="section-title"><i class="bi bi-clock-history"></i>Past Appointments</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    @if (Model.PastAppointments != null && Model.PastAppointments.Any())
+                                    {
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Time</th>
+                                                        <th>Doctor</th>
+                                                        <th>Department</th>
+                                                        <th>Reason</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var appointment in Model.PastAppointments.OrderByDescending(a => a.AppointmentDate).ThenByDescending(a => a.AppointmentTime))
+                                                    {
+                                                        <tr>
+                                                            <td>@appointment.AppointmentDate.ToString("yyyy-MM-dd")</td>
+                                                            <td>@(appointment.AppointmentTime.HasValue ? new DateTime().Add(appointment.AppointmentTime.Value).ToString("hh:mm tt") : "Not Set")</td>
+                                                            <td>@(appointment.Doctor?.FullName ?? "N/A")</td>
+                                                            <td>@(appointment.Department?.Name ?? "N/A")</td>
+                                                            <td>@appointment.Reason</td>
+                                                            <td>
+                                                                @{
+                                                                    string badgeClass = "";
+                                                                    switch (appointment.Status)
+                                                                    {
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Pending:
+                                                                            badgeClass = "bg-warning";
+                                                                            break;
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Approved:
+                                                                            badgeClass = "bg-success";
+                                                                            break;
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Rejected:
+                                                                            badgeClass = "bg-danger";
+                                                                            break;
+                                                                        case HospitalManagementSystem.Repository.Models.AppointmentStatus.Cancelled:
+                                                                            badgeClass = "bg-secondary";
+                                                                            break;
+                                                                        default:
+                                                                            badgeClass = "bg-info"; // Default or unknown status
+                                                                            break;
+                                                                    }
+                                                                }
+                                                                <span class="badge @badgeClass">@appointment.Status.ToString()</span>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info text-center" role="alert">
+                                            <h5 class="alert-heading"><i class="bi bi-calendar-x-fill me-2"></i>No Past Appointments</h5>
+                                            <p>No past appointments recorded for your profile. This section will show your completed visits.</p>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="payments" role="tabpanel" aria-labelledby="payments-tab">
+                    <ul class="nav nav-tabs nav-justified mb-3" id="paymentSubTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="payment-due-tab" data-bs-toggle="tab" data-bs-target="#paymentDue" type="button" role="tab" aria-controls="paymentDue" aria-selected="true">
+                                <i class="bi bi-cash-coin"></i> Payment Due
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="payment-history-tab" data-bs-toggle="tab" type="button" role="tab" aria-controls="paymentHistory" aria-selected="false">
+                                <i class="bi bi-wallet-fill"></i> Payment History
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="paymentSubTabContent">
+                        <div class="tab-pane fade show active" id="paymentDue" role="tabpanel" aria-labelledby="payment-due-tab">
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header">
+                                    <h4 class="section-title"><i class="bi bi-cash-stack"></i>Outstanding Payments</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="alert alert-info text-center" role="alert">
+                                        <h5 class="alert-heading"><i class="bi bi-piggy-bank me-2"></i>No Outstanding Payments</h5>
+                                        <p>You currently have no outstanding payments.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="paymentHistory" role="tabpanel" aria-labelledby="payment-history-tab">
+                            <div class="card shadow-sm mb-4">
+                                <div class="card-header">
+                                    <h4 class="section-title"><i class="bi bi-receipt"></i>Completed Payments</h4>
+                                </div>
+                                <div class="card-body p-4">
+                                    <div class="alert alert-info text-center" role="alert">
+                                        <h5 class="alert-heading"><i class="bi bi-credit-card-fill me-2"></i>No Payment Records</h5>
+                                        <p>No payment records are available for your profile at this moment.</p>
+                                        <hr>
+                                        <a href="#" class="alert-link btn btn-info text-white"><i class="bi bi-receipt-cutoff me-2"></i>View Billing Information</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    
+   
+   
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

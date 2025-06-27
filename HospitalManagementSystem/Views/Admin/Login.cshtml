@@ -1,0 +1,54 @@
+﻿@model HospitalManagementSystem.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Admin Login";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm rounded-lg">
+                <div class="card-header bg-success text-white text-center py-3 rounded-top-lg">
+                    <h3 class="mb-0 fw-bold"><i class="fas fa-user-shield me-2"></i>Admin Login</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-controller="Admin" asp-action="Login" asp-route-returnurl="@returnUrl" method="post">
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="ContactNumberOrEmail" class="form-label fw-semibold">Username/Email:</label>
+                            <input asp-for="ContactNumberOrEmail" class="form-control px-3 py-2" placeholder="Enter Admin Username or Email" />
+                            <span asp-validation-for="ContactNumberOrEmail" class="text-danger small mt-1"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label fw-semibold">Password:</label>
+                            <input asp-for="Password" type="password" class="form-control px-3 py-2" placeholder="Enter Password" />
+                            <span asp-validation-for="Password" class="text-danger small mt-1"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="RememberMe" type="checkbox" class="form-check-input" id="rememberMe" />
+                            <label class="form-check-label" for="rememberMe">Remember me?</label>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg shadow">Log in</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary btn-lg shadow">Back to Home</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

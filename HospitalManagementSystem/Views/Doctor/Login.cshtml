@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Doctor Login";
+}
+
+<h1>Doctor Login</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
+
+            <div class="form-group mb-3">
+                <label for="ContactNumberOrEmail" class="control-label">Email / Contact Number</label>
+                <input type="text" name="ContactNumberOrEmail" class="form-control" required /> @* Changed name to ContactNumberOrEmail and type to text *@
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="Password" class="control-label">Password</label>
+                <input type="password" name="Password" class="form-control" required />
+            </div>
+
+            <div class="form-group form-check mb-3">
+                <input type="checkbox" name="RememberMe" id="rememberMe" class="form-check-input" /> @* Changed name to RememberMe (PascalCase) *@
+                <label class="form-check-label" for="rememberMe">Remember me?</label>
+            </div>
+
+            <div class="form-group mb-3">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <p>Don't have an account? <a asp-action="Register">Register here</a>.</p>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

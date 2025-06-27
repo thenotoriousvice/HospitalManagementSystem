@@ -1,0 +1,178 @@
+﻿@model HospitalManagementSystem.Repository.Models.EditProfileViewModel;
+
+@{
+    ViewData["Title"] = "Edit Profile";
+}
+
+<style>
+    .edit-profile-container {
+        padding: 30px;
+        background-color: #f8f9fa; /* Light gray background */
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow */
+        margin-top: 30px;
+    }
+
+    .edit-profile-header h1 {
+        font-size: 2.5rem;
+        color: #007bff; /* Primary blue */
+        margin-bottom: 30px;
+        text-align: center;
+        font-weight: 600;
+    }
+
+    .edit-form-wrapper {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+        border: 1px solid #eee;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        color: #555;
+        font-weight: 500;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ced4da;
+        border-radius: 6px;
+        font-size: 1rem;
+        box-sizing: border-box;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #0d6efd; /* Primary blue focus */
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+    .text-danger {
+        font-size: 0.9em;
+        color: #dc3545; /* Bootstrap danger color */
+        margin-top: 5px;
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: #fff;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.15s ease-in-out, transform 0.1s ease-in-out;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.02);
+        }
+
+    .back-to-dashboard {
+        margin-top: 20px;
+        font-size: 1rem;
+    }
+
+        .back-to-dashboard a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.15s ease-in-out;
+        }
+
+            .back-to-dashboard a:hover {
+                color: #0056b3;
+                text-decoration: underline;
+            }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 edit-profile-container">
+            <div class="edit-form-wrapper">
+                <div class="edit-profile-header">
+                    <h1>@ViewBag.st Profile</h1>
+                </div>
+                <form asp-action="EditProfile" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" asp-for="DoctorId" />
+                    <input type="hidden" asp-for="Email" />
+
+                    <div class="form-group">
+                        <label asp-for="FullName" class="form-label"></label>
+                        <input asp-for="FullName" class="form-control" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" readonly /> @* Email is from Identity, usually read-only here *@
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PhoneNumber" class="form-label"></label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Qualification" class="form-label"></label>
+                        <input asp-for="Qualification" class="form-control" />
+                        <span asp-validation-for="Qualification" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="ExperienceYears" class="form-label"></label>
+                        <input asp-for="ExperienceYears" type="number" class="form-control" />
+                        <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="DepartmentId" class="form-label"></label>
+                        <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-control">
+                            <option value="">-- Select Department --</option>
+                        </select>
+                        <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="WorkingHoursStart" class="form-label"></label>
+                        <input asp-for="WorkingHoursStart" type="time" class="form-control" />
+                        <span asp-validation-for="WorkingHoursStart" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="WorkingHoursEnd" class="form-label"></label>
+                        <input asp-for="WorkingHoursEnd" type="time" class="form-control" />
+                        <span asp-validation-for="WorkingHoursEnd" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-lg rounded-pill">@ViewBag.st</button>
+                    </div>
+
+                    <div class="back-to-dashboard">
+                        <a asp-action="Dashboard">Back to Dashboard</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
