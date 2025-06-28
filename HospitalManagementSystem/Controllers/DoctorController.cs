@@ -323,5 +323,32 @@ namespace HospitalManagementSystem.Controllers
             TempData["Message"] = result.Succeeded ? "Appointment cancelled successfully!" : $"Failed to cancel appointment: {result.Errors.FirstOrDefault()?.Description}";
             return RedirectToAction(nameof(MyAppointments));
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken] // Good practice for POST requests from forms
+        public async Task<IActionResult> Complete(int id)
+        {
+            try
+            {
+                var success = await _appointmentService.CompleteAppointmentAsync(id);
+
+                if (success)
+                {
+                    TempData["SuccessMessage"] = "Appointment marked as completed successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Failed to mark appointment as completed. Appointment not found or an error occurred.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while completing the appointment: {ex.Message}";
+                // Log the exception (e.g., using a logger)
+                Console.Error.WriteLine($"Error in DoctorController.Complete: {ex.Message}");
+            }
+
+            return RedirectToAction("MyAppointments"); // Redirect back to the MyAppointments view
+        }
     }
 }

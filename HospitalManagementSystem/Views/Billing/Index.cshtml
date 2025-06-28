@@ -1,0 +1,249 @@
+﻿@model HospitalManagementSystem.Repository.Models.Bill
+
+@{
+    ViewData["Title"] = @ViewBag.Action + " Bill";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #E0FFFF !important; /* AliceBlue - Very light sky blue */
+            margin: 0 !important;
+            padding: 15px !important;
+            box-sizing: border-box !important;
+            min-height: 100vh; /* Ensure body extends to full viewport height to push footer down */
+        }
+
+        /* Styling for the main card, acting as the container */
+        .main-form-card {
+            max-width: 700px !important;
+            width: 100% !important;
+            margin-top: 50px !important;
+            margin-bottom: 50px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            background-color: #FFFFFF !important;
+            border-color: #ADD8E6 !important; /* LightBlue - Lighter sky blue border */
+            border-radius: 1rem !important;
+            overflow: hidden !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08) !important;
+            animation: slideInUp 0.8s ease-out !important;
+        }
+
+        @@keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(to right, #2979FF) !important; /* Deep Sky Blue to Dodger Blue gradient */
+            color: #FFFFFF !important;
+            padding: 1.5rem 2rem !important;
+            border-bottom: none !important;
+            font-size: 1.8rem !important;
+            font-weight: 700 !important;
+            display: flex !important;
+            align-items: center !important;
+            border-top-left-radius: 1rem !important;
+            border-top-right-radius: 1rem !important;
+            justify-content: center !important;
+        }
+
+        .card-title {
+            margin-bottom: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            text-align: center !important;
+            font-size: inherit !important;
+        }
+
+            .card-title i {
+                font-size: 1.5em !important;
+                margin-right: 0.8rem !important;
+                color: rgba(255, 255, 255, 0.95) !important;
+            }
+
+        .card-body {
+            padding: 2.5rem !important;
+        }
+
+        .form-label {
+            color: #36454F !important; /* Charcoal for good contrast */
+            font-weight: 600 !important;
+            margin-bottom: 0.6rem !important;
+            display: flex !important;
+            align-items: center !important;
+            font-size: 1.05em !important;
+        }
+
+            .form-label i {
+                margin-right: 0.7rem !important;
+                font-size: 1.1em !important;
+                color: #1E90FF !important; /* Dodger Blue for label icons */
+            }
+
+        .form-control {
+            background-color: #F8F8FF !important; /* GhostWhite - very light almost white */
+            border: 1px solid #B0E0E6 !important; /* PowderBlue - Lighter input border */
+            border-radius: 0.75rem !important;
+            padding: 0.75rem 1.25rem !important;
+            font-size: 1.05rem !important;
+            color: #34495E !important;
+            transition: all 0.3s ease !important;
+        }
+
+            .form-control:focus {
+                border-color: #1E90FF !important; /* Dodger Blue on focus */
+                box-shadow: 0 0 0 0.25rem rgba(30, 144, 255, 0.25) !important; /* Dodger Blue glow effect on focus */
+                background-color: #FFFFFF !important;
+            }
+
+        .btn {
+            font-size: 1.1rem !important;
+            padding: 0.8rem 1.8rem !important;
+            border-radius: 2rem !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+            .btn i {
+                margin-right: 0.7rem !important;
+                font-size: 1.1em !important;
+            }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #1E90FF, #007BFF) !important; /* Dodger Blue to Standard Blue gradient */
+            border: none !important;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3) !important;
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(45deg, #007BFF, #0056b3) !important; /* Standard Blue to Darker Blue on hover */
+                transform: translateY(-2px) !important;
+                box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4) !important;
+            }
+
+        .btn-outline-secondary {
+            color: #1E90FF !important; /* Dodger Blue for outline buttons */
+            border-color: #1E90FF !important;
+            background-color: transparent !important;
+            box-shadow: none !important;
+        }
+
+            .btn-outline-secondary:hover {
+                background-color: #1E90FF !important;
+                color: #FFFFFF !important;
+                transform: translateY(-2px) !important;
+                box-shadow: 0 5px 15px rgba(30, 144, 255, 0.3) !important;
+            }
+
+        .text-danger {
+            font-size: 0.9em !important;
+            margin-top: 0.4rem !important;
+            display: block !important;
+            color: #dc3545 !important; /* Keep standard red for errors */
+            font-weight: 500 !important;
+        }
+
+        /* Specific style for the accent text in the header */
+        .header-accent-text {
+            color: #FFFFFF !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card p-4 mx-auto main-form-card">
+        <div class="card-header bg-gradient-primary text-white py-3 rounded-top">
+            <h2 class="card-title m-0 fw-bold">
+                <i class="bi bi-receipt-fill me-2"></i> @ViewBag.Action <span class="header-accent-text">Bill</span>
+            </h2>
+        </div>
+        <div class="card-body p-4">
+            <form asp-action="Index" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="BillId" />
+                <input type="hidden" asp-for="Status" />
+                <input type="hidden" asp-for="UploadedFilePath" />
+                <input type="hidden" name="appointmentId" value="@ViewBag.AppointmentId" />
+
+                <div class="mb-3">
+                    <label asp-for="PatientId" class="form-label"><i class="bi bi-person-fill"></i> Patient ID</label>
+                    <input asp-for="PatientId" class="form-control" readonly />
+                    <span asp-validation-for="PatientId" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="TotalAmount" class="form-label"><i class="bi bi-currency-rupee"></i> Total Amount</label>
+                    <div class="input-group">
+                        <input asp-for="TotalAmount" class="form-control" />
+                    </div>
+                    <span asp-validation-for="TotalAmount" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="BillDate" class="form-label"><i class="bi bi-calendar-event-fill"></i> Bill Date & Time</label>
+                    <input asp-for="BillDate" class="form-control" id="BillDate" type="datetime-local" />
+                    <span asp-validation-for="BillDate" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label for="uploadedFile" class="form-label"><i class="bi bi-upload"></i> Upload Document (Optional)</label>
+                    <input type="file" name="uploadedFile" id="uploadedFile" class="form-control" />
+                </div>
+
+                <div class="d-flex justify-content-end mt-4 pt-3 border-top">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-upload"></i> Upload Bill</button> @* Change text and icon *@
+                    <a asp-action="Show" class="btn btn-outline-secondary ms-3"><i class="bi bi-arrow-left-circle-fill"></i> Back to Bills</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var billDateInput = document.getElementById('BillDate');
+                if (billDateInput) {
+                    var billId = document.querySelector('input[name="BillId"]').value;
+                    if (!billId || billId === '0') {
+                        var today = new Date();
+                        var year = today.getFullYear();
+                        var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                        var day = today.getDate().toString().padStart(2, '0');
+                        var hours = today.getHours().toString().padStart(2, '0');
+                        var minutes = today.getMinutes().toString().padStart(2, '0');
+                        billDateInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+                    }
+                }
+
+                var patientIdInput = document.querySelector('input[name="PatientId"]'); // Select by name as asp-for generates name
+                if (patientIdInput && (!patientIdInput.value || patientIdInput.value === '0')) { // Only pre-fill if not already set
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const patientIdFromUrl = urlParams.get('patientId');
+                    if (patientIdFromUrl) {
+                        patientIdInput.value = patientIdFromUrl;
+                    }
+                }
+            });
+        </script>
+    }
+</body>

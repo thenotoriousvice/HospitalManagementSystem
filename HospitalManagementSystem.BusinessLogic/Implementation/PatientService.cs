@@ -22,12 +22,12 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
     // Creates a new Identity user and a linked Patient profile.
     public async Task<IdentityResult> CreatePatientAsync(Patient patient, string password)
     {
-        // Create a new IdentityUser based on patient's contact number (or a dedicated username/email field).
-        // Using ContactNumber as UserName/Email for simplicity in this example. Consider a dedicated username/email field for Identity.
-        var user = new IdentityUser { UserName = patient.ContactNumber, Email = patient.ContactNumber };
- 
-        // Attempt to create the Identity user with the provided password.
-        var result = await _userManager.CreateAsync(user, password);
+            // Create a new IdentityUser based on patient's contact number (or a dedicated username/email field).
+            // Using ContactNumber as UserName/Email for simplicity in this example. Consider a dedicated username/email field for Identity.
+            var user = new IdentityUser { UserName = patient.ContactNumber, Email = patient.Email };
+
+            // Attempt to create the Identity user with the provided password.
+            var result = await _userManager.CreateAsync(user, password);
  
         if (result.Succeeded)
         {

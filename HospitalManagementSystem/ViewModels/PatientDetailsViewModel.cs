@@ -16,6 +16,8 @@ namespace HospitalManagementSystem.ViewModels
         public string ContactNumber { get; set; }
         public string Address { get; set; }
         public string MedicalHistory { get; set; }
+        public string Email { get; set; } // Added email property
+        public string PhoneNumber { get; set; } // Added phone number property
         public string IdentityUserName { get; set; } // To display the linked Identity user's username/email
 
         // NEW PROPERTIES FOR APPOINTMENTS

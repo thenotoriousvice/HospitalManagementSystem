@@ -1,9 +1,12 @@
-using Microsoft.EntityFrameworkCore;
-using HospitalManagementSystem.Repository.Data;
-using HospitalManagementSystem.BusinessLogic.Interfaces;
+using BillingAndPayments.Repository.Repositories;
 using HospitalManagementSystem.BusinessLogic.Implementation; // For PatientService (assuming it's in Implementation)
-using Microsoft.AspNetCore.Identity;
+using HospitalManagementSystem.BusinessLogic.Interfaces;
+using HospitalManagementSystem.BusinessLogic.Services;
+using HospitalManagementSystem.Repository.Data;
 using HospitalManagementSystem.Repository.Data.DataSeeding; // For DataSeeder
+using HospitalManagementSystem.Repository.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,10 +55,47 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.AccessDeniedPath = "/Home/AccessDenied"; // Set this to your Access Denied action/page
 });
 
+builder.Services.Configure<CookiePolicyOptions>(options =>
+
+{
+
+    options.CheckConsentNeeded = context => false; // Optional: true if you want consent banner
+
+    options.MinimumSameSitePolicy = SameSiteMode.Lax; // Change to None if needed
+
+    options.Secure = CookieSecurePolicy.Always; // Enforce HTTPS
+
+});
+
+// 3. Configure Session properly
+
+builder.Services.AddSession(options =>
+
+{
+
+    options.Cookie.Name = ".DoctorMgmt.Session";
+
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // adjust as needed
+
+    options.Cookie.HttpOnly = true;
+
+    options.Cookie.IsEssential = true;
+
+    options.Cookie.SameSite = SameSiteMode.Lax; // Set to None if needed with HTTPS
+
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+});
+
 // --- Business Logic Services Registration ---
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IDoctorAccountService, DoctorAccountService>();
 builder.Services.AddScoped<IPatientService, HospitalManagementSystem.BusinessLogic.Implementation.PatientService>();
+
+
+builder.Services.AddScoped<IBillRepository, BillRepository>();
+builder.Services.AddScoped<IBillService, BillService>();
+builder.Services.AddHttpContextAccessor();
 
 
 var app = builder.Build();
@@ -117,6 +157,12 @@ app.UseAuthorization(); // Authorizes users based on policies/roles.
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+
+    name: "default",
+
+    pattern: "{controller=Doctor}/{action=Login}/{id?}");
 
 
 app.Run(); // Starts the application

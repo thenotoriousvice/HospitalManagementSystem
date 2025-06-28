@@ -52,28 +52,75 @@ namespace HospitalManagementSystem.Controllers
                     Gender = model.Gender,
                     ContactNumber = model.ContactNumber,
                     Address = model.Address,
-                    MedicalHistory = model.MedicalHistory
+                    MedicalHistory = model.MedicalHistory,
+                    Email = model.Email,
+                    PhoneNumber = model.ContactNumber
                 };
 
-                var result = await _patientService.CreatePatientAsync(patient, model.Password);
-
-                if (result.Succeeded)
+                try
                 {
-                    var newUser = await _userManager.FindByNameAsync(model.ContactNumber);
-                    if (newUser != null)
+                    // Create patient and get the result
+                    var result = await _patientService.CreatePatientAsync(patient, model.Password);
+
+                    if (result.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(newUser, "Patient");
+                        // Try to find the user by email first, then by contact number
+                        var newUser = await _userManager.FindByEmailAsync(model.Email) ?? 
+                                      await _userManager.FindByNameAsync(model.ContactNumber);
+
+                        if (newUser != null)
+                        {
+                            // Add the "Patient" role to the new user
+                            var roleResult = await _userManager.AddToRoleAsync(newUser, "Patient");
+                            if (!roleResult.Succeeded)
+                            {
+                                // Log the error
+                                var errorMessages = string.Join("\n", roleResult.Errors.Select(e => e.Description));
+                                Console.WriteLine($"Role assignment failed: {errorMessages}");
+                                
+                                // Add errors to ModelState
+                                foreach (var error in roleResult.Errors)
+                                {
+                                    ModelState.AddModelError(string.Empty, error.Description);
+                                }
+                                return View(model);
+                            }
+
+                            // Sign in the user
+                            await _signInManager.SignInAsync(newUser, isPersistent: false);
+                            TempData["SuccessMessage"] = "Registration successful! You are now logged in.";
+                            return RedirectToAction("MyProfile", "Patient");
+                        }
+                        else
+                        {
+                            // Log the error
+                            Console.WriteLine("User registration succeeded but user not found after creation");
+                            ModelState.AddModelError(string.Empty, "Registration succeeded but we couldn't log you in. Please try logging in manually.");
+                            return View(model);
+                        }
                     }
-
-                    await _signInManager.SignInAsync(newUser, isPersistent: false);
-                    return RedirectToAction("MyProfile", "Patient");
+                    else
+                    {
+                        // Log the error
+                        var errorMessages = string.Join("\n", result.Errors.Select(e => e.Description));
+                        Console.WriteLine($"Patient creation failed: {errorMessages}");
+                        
+                        // Add errors to ModelState
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
                 }
-
-                foreach (var error in result.Errors)
+                catch (Exception ex)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    // Log any unexpected errors
+                    Console.WriteLine($"Unexpected error during registration: {ex.Message}");
+                    ModelState.AddModelError(string.Empty, "An unexpected error occurred during registration. Please try again later.");
                 }
             }
+            
+            // Return to view with validation errors
             return View(model);
         }
 
@@ -153,39 +200,47 @@ namespace HospitalManagementSystem.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Authorize(Roles = "Patient,Admin")]
+        [HttpGet]
         public async Task<IActionResult> MyProfile()
         {
-            var user = await _userManager.GetUserAsync(User);
-            if (user == null) return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
-
-            var patient = await _patientService.GetPatientByUserIdAsync(user.Id);
-            if (patient == null)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
             {
-                if (User.IsInRole("Admin"))
-                {
-                    return RedirectToAction("Dashboard", "Admin");
-                }
-                return RedirectToAction(nameof(CreateProfile));
+                return Unauthorized("User ID not found.");
             }
 
-            var allPatientAppointments = (await _appointmentService.GetAppointmentsByPatientIdAsync(patient.PatientId))
-                                                .ToList();
+            var patient = await _patientService.GetPatientByUserIdAsync(userId);
+            if (patient == null)
+            {
+                // Handle case where patient profile is not found, perhaps redirect to create profile
+                return RedirectToAction("CreateProfile"); // Or a suitable error page
+            }
 
-            // Calculate current DateTime for comparison
-            DateTime currentDateTime = DateTime.Now;
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"Unable to load user with ID '{userId}'.");
+            }
 
-            var upcomingAppointments = allPatientAppointments
-                                        .Where(a => a.AppointmentDate.Add(a.AppointmentTime ?? TimeSpan.Zero) >= currentDateTime)
-                                        .OrderBy(a => a.AppointmentDate)
-                                        .ThenBy(a => a.AppointmentTime)
-                                        .ToList();
+            // Fetch appointments for the current patient using their patient ID
+            var allAppointments = await _appointmentService.GetAppointmentsByPatientIdAsync(patient.PatientId);
 
-            var pastAppointments = allPatientAppointments
-                                    .Where(a => a.AppointmentDate.Add(a.AppointmentTime ?? TimeSpan.Zero) < currentDateTime)
-                                    .OrderByDescending(a => a.AppointmentDate)
-                                    .ThenByDescending(a => a.AppointmentTime)
-                                    .ToList();
+            // Filter appointments into upcoming and past
+            var upcomingAppointments = allAppointments
+                .Where(a => a.AppointmentDate.Date >= DateTime.Today &&
+                             (a.Status == AppointmentStatus.Approved || a.Status == AppointmentStatus.Pending))
+                .OrderBy(a => a.AppointmentDate)
+                .ThenBy(a => a.AppointmentTime)
+                .ToList();
+
+            var pastAppointments = allAppointments
+                .Where(a => a.AppointmentDate.Date < DateTime.Today ||
+                             a.Status == AppointmentStatus.Cancelled ||
+                             a.Status == AppointmentStatus.Rejected ||
+                             a.Status == AppointmentStatus.Approved) // Include completed, cancelled, rejected as "past"
+                .OrderByDescending(a => a.AppointmentDate)
+                .ThenByDescending(a => a.AppointmentTime)
+                .ToList();
 
             var model = new PatientDetailsViewModel
             {
@@ -196,7 +251,8 @@ namespace HospitalManagementSystem.Controllers
                 ContactNumber = patient.ContactNumber,
                 Address = patient.Address,
                 MedicalHistory = patient.MedicalHistory,
-                IdentityUserName = user.UserName,
+                Email = patient.Email,
+                PhoneNumber = patient.PhoneNumber,
                 UpcomingAppointments = upcomingAppointments,
                 PastAppointments = pastAppointments
             };

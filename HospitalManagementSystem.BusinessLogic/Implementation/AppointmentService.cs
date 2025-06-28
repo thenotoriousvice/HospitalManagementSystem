@@ -26,120 +26,131 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
 
         public async Task<Appointment> CreateAppointmentAsync(Appointment appointment, bool isExistingPatient)
         {
-            appointment.RequestedAt = DateTime.Now;
-            appointment.Status = AppointmentStatus.Pending;
-
-            // Handle patient details based on whether it's an existing BookedAppointment or a new one
-            if (isExistingPatient)
+            try
             {
-                // If it's an existing patient, and PatientId is not already set, try to find them.
-                // Note: The 'Patient' navigation property in Appointment model should ideally be 'BookedAppointment'
-                // and the DbSet in ApplicationDbContext should be 'BookAppointments'.
-                if (!appointment.PatientId.HasValue)
-                {
-                    // Search in BookAppointments DbSet
-                    var existingBookedAppointment = await _context.BookedAppointments
-                        .FirstOrDefaultAsync(p => p.Email == appointment.PatientEmail || p.PhoneNumber == appointment.PatientPhoneNumber);
+                appointment.RequestedAt = DateTime.Now;
+                appointment.Status = AppointmentStatus.Pending;
 
-                    if (existingBookedAppointment != null)
+                // Handle patient details based on whether it's an existing patient
+                if (isExistingPatient)
+                {
+                    // If it's an existing patient and PatientId is not already set, try to find them
+                    if (!appointment.PatientId.HasValue)
                     {
-                        appointment.PatientId = existingBookedAppointment.Id;
-                    }
-                    else
-                    {
-                        // If 'isExistingPatient' is true but no matching BookedAppointment is found,
-                        // this might indicate a logic flow issue or the need to create a new BookedAppointment
-                        // even for "existing" scenarios if they aren't in the BookedAppointments table yet.
-                        // For now, let's create a new one as a fallback if not found.
-                        var newBookedAppointment = new BookedAppointment
+                        var existingPatient = await _context.Patients
+                            .FirstOrDefaultAsync(p => p.Email == appointment.PatientEmail || 
+                                               p.PhoneNumber == appointment.PatientPhoneNumber);
+
+                        if (existingPatient != null)
                         {
-                            Name = appointment.PatientName,
-                            Email = appointment.PatientEmail,
-                            PhoneNumber = appointment.PatientPhoneNumber
-                        };
-                        _context.BookedAppointments.Add(newBookedAppointment); // Use BookAppointments DbSet
-                        await _context.SaveChangesAsync();
-                        appointment.PatientId = newBookedAppointment.Id;
-                    }
-                }
-            }
-            else // This path is for new BookedAppointments
-            {
-                var newBookedAppointment = new BookedAppointment
-                {
-                    Name = appointment.PatientName,
-                    Email = appointment.PatientEmail,
-                    PhoneNumber = appointment.PatientPhoneNumber
-                };
-                _context.BookedAppointments.Add(newBookedAppointment); // Use BookAppointments DbSet
-                await _context.SaveChangesAsync();
-                appointment.PatientId = newBookedAppointment.Id;
-            }
-
-            // Automatic Doctor Allotment for Department-only bookings
-            if (appointment.DoctorId == null && appointment.DepartmentId.HasValue && appointment.AppointmentTime.HasValue)
-            {
-                var doctorsInDepartment = await _context.Doctors
-                    .Where(d => d.DepartmentId == appointment.DepartmentId.Value)
-                    .ToListAsync();
-
-                Doctor allottedDoctor = null;
-                foreach (var doctor in doctorsInDepartment)
-                {
-                    if (doctor.WorkingHoursStart.HasValue && doctor.WorkingHoursEnd.HasValue &&
-                        appointment.AppointmentTime.Value >= doctor.WorkingHoursStart.Value &&
-                        appointment.AppointmentTime.Value < doctor.WorkingHoursEnd.Value)
-                    {
-                        bool isSlotBooked = await _context.Appointments
-                            .AnyAsync(a => a.DoctorId == doctor.Id &&
-                                           a.AppointmentDate == appointment.AppointmentDate &&
-                                           a.AppointmentTime == appointment.AppointmentTime &&
-                                           a.Status == AppointmentStatus.Approved);
-
-                        if (!isSlotBooked)
+                            appointment.PatientId = existingPatient.PatientId;
+                            appointment.Patient = existingPatient;
+                        }
+                        else
                         {
-                            allottedDoctor = doctor;
-                            break;
+                            // If patient not found, create a new one
+                            var newPatient = new Patient
+                            {
+                                Name = appointment.PatientName,
+                                Email = appointment.PatientEmail,
+                                PhoneNumber = appointment.PatientPhoneNumber
+                            };
+                            
+                            _context.Patients.Add(newPatient);
+                            await _context.SaveChangesAsync();
+                            appointment.PatientId = newPatient.PatientId;
+                            appointment.Patient = newPatient;
                         }
                     }
                 }
-
-                if (allottedDoctor != null)
-                {
-                    appointment.DoctorId = allottedDoctor.Id;
-                }
                 else
                 {
-                    return null; // No doctor available for the requested time slot
+                    // Create new patient
+                    var newPatient = new Patient
+                    {
+                        Name = appointment.PatientName,
+                        Email = appointment.PatientEmail,
+                        PhoneNumber = appointment.PatientPhoneNumber
+                    };
+                    
+                    _context.Patients.Add(newPatient);
+                    await _context.SaveChangesAsync();
+                    appointment.PatientId = newPatient.PatientId;
+                    appointment.Patient = newPatient;
                 }
+
+                // Automatic Doctor Allotment for Department-only bookings
+                if (appointment.DoctorId == null && appointment.DepartmentId.HasValue && appointment.AppointmentTime.HasValue)
+                {
+                    var doctorsInDepartment = await _context.Doctors
+                        .Where(d => d.DepartmentId == appointment.DepartmentId.Value)
+                        .ToListAsync();
+
+                    Doctor allottedDoctor = null;
+                    foreach (var doctor in doctorsInDepartment)
+                    {
+                        if (doctor.WorkingHoursStart.HasValue && doctor.WorkingHoursEnd.HasValue &&
+                            appointment.AppointmentTime.Value >= doctor.WorkingHoursStart.Value &&
+                            appointment.AppointmentTime.Value < doctor.WorkingHoursEnd.Value)
+                        {
+                            bool isSlotBooked = await _context.Appointments
+                                .AnyAsync(a => a.DoctorId == doctor.Id &&
+                                       a.AppointmentDate == appointment.AppointmentDate &&
+                                       a.AppointmentTime == appointment.AppointmentTime &&
+                                       a.Status == AppointmentStatus.Approved);
+
+                            if (!isSlotBooked)
+                            {
+                                allottedDoctor = doctor;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (allottedDoctor != null)
+                    {
+                        appointment.DoctorId = allottedDoctor.Id;
+                        appointment.Doctor = allottedDoctor;
+                    }
+                    else
+                    {
+                        return null; // No doctor available for the requested time slot
+                    }
+                }
+                else if (appointment.DoctorId.HasValue && appointment.AppointmentTime.HasValue)
+                {
+                    var selectedDoctor = await _context.Doctors.FirstOrDefaultAsync(d => d.Id == appointment.DoctorId.Value);
+
+                    if (selectedDoctor == null ||
+                        !selectedDoctor.WorkingHoursStart.HasValue || !selectedDoctor.WorkingHoursEnd.HasValue ||
+                        appointment.AppointmentTime.Value < selectedDoctor.WorkingHoursStart.Value ||
+                        appointment.AppointmentTime.Value >= selectedDoctor.WorkingHoursEnd.Value)
+                    {
+                        return null; // Invalid time slot for this doctor's working hours
+                    }
+
+                    bool isSlotBooked = await _context.Appointments
+                        .AnyAsync(a => a.DoctorId == appointment.DoctorId.Value &&
+                                       a.AppointmentDate == appointment.AppointmentDate &&
+                                       a.AppointmentTime == appointment.AppointmentTime &&
+                                       a.Status == AppointmentStatus.Approved);
+
+                    if (isSlotBooked)
+                    {
+                        return null; // Slot already booked for this specific doctor
+                    }
+                }
+
+                _context.Appointments.Add(appointment);
+                await _context.SaveChangesAsync();
+
+                return appointment;
             }
-            else if (appointment.DoctorId.HasValue && appointment.AppointmentTime.HasValue)
+            catch (Exception ex)
             {
-                var selectedDoctor = await _context.Doctors.FirstOrDefaultAsync(d => d.Id == appointment.DoctorId.Value);
-
-                if (selectedDoctor == null ||
-                    !selectedDoctor.WorkingHoursStart.HasValue || !selectedDoctor.WorkingHoursEnd.HasValue ||
-                    appointment.AppointmentTime.Value < selectedDoctor.WorkingHoursStart.Value ||
-                    appointment.AppointmentTime.Value >= selectedDoctor.WorkingHoursEnd.Value)
-                {
-                    return null; // Invalid time slot for this doctor's working hours
-                }
-
-                bool isSlotBooked = await _context.Appointments
-                    .AnyAsync(a => a.DoctorId == appointment.DoctorId.Value &&
-                                   a.AppointmentDate == appointment.AppointmentDate &&
-                                   a.AppointmentTime == appointment.AppointmentTime &&
-                                   a.Status == AppointmentStatus.Approved);
-
-                if (isSlotBooked)
-                {
-                    return null; // Slot already booked for this specific doctor
-                }
+                Console.WriteLine($"Error creating appointment: {ex.Message}");
+                return null;
             }
-
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
-            return appointment;
         }
 
         public async Task<IEnumerable<Department>> GetAllDepartmentsAsync()
@@ -204,12 +215,17 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
             return await _context.Appointments
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor)
-                    .ThenInclude(d => d.IdentityUser) // Include IdentityUser for doctor details if needed
                 .Include(a => a.Department)
                 .Where(a => a.PatientId == patientId)
                 .OrderByDescending(a => a.AppointmentDate)
                 .ThenByDescending(a => a.AppointmentTime)
                 .ToListAsync();
+        }
+
+        public async Task<Patient> GetPatientByUserIdAsync(string userId)
+        {
+            return await _context.Patients
+                .FirstOrDefaultAsync(p => p.IdentityUserId == userId);
         }
 
         public async Task<IdentityResult> CancelAppointmentAsync(int appointmentId)
@@ -413,6 +429,55 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
                 .OrderByDescending(a => a.AppointmentDate) // Order by latest date first
                 .ThenByDescending(a => a.AppointmentTime)  // Then by time
                 .ToListAsync();
+        }
+
+        public async Task<bool> UpdateAppointmentStatusAsync(int id, AppointmentStatus newStatus)
+        {
+            var appointment = await _context.Appointments.FindAsync(id);
+            if (appointment == null) return false;
+
+            appointment.Status = newStatus;
+            _context.Entry(appointment).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> CompleteAppointmentAsync(int appointmentId)
+        {
+            var appointment = await _context.Appointments
+                                            .Include(a => a.Patient) // Include Patient to potentially use their email later if needed for notifications
+                                            .FirstOrDefaultAsync(a => a.Id == appointmentId);
+
+            if (appointment == null)
+            {
+                // Appointment not found
+                return false;
+            }
+
+            if (appointment.Status == AppointmentStatus.Approved) // Only complete if currently Approved
+            {
+                appointment.Status = AppointmentStatus.Completed;
+                // You might also want to set a CompletionDate here if you add such a property to your Appointment model
+                // appointment.CompletionDate = DateTime.Now;
+
+                _context.Entry(appointment).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+
+                // Optional: Send a notification to the patient that their appointment is completed
+                // if (appointment.Patient != null && !string.IsNullOrEmpty(appointment.Patient.Email))
+                // {
+                //     await SendAppointmentEmailAsync(appointment.Patient.Email,
+                //         "Appointment Completed",
+                //         $"Dear {appointment.Patient.Name},\n\nYour appointment on {appointment.AppointmentDate.ToShortDateString()} at {appointment.AppointmentTime?.ToString("hh:mm tt")} has been marked as completed.\n\nThank you for choosing our hospital.");
+                // }
+
+                return true;
+            }
+            else
+            {
+                // Appointment is not in a state that can be completed (e.g., Pending, Rejected, Cancelled, already Completed)
+                return false;
+            }
         }
 
         private async Task SendAppointmentEmailAsync(string toEmail, string subject, string plainTextContent)

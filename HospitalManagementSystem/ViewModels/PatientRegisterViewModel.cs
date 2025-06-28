@@ -21,6 +21,11 @@ namespace HospitalManagementSystem.ViewModels
         [StringLength(15, ErrorMessage = "Contact Number cannot exceed 15 characters.")]
         public string ContactNumber { get; set; } // Used as UserName/Email for Identity
 
+        [Required(ErrorMessage = "Email Address is required.")] // <<<< ADD THIS
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]  // <<<< ADD THIS
+        [StringLength(255, ErrorMessage = "Email Address cannot exceed 255 characters.")] // <<<< ADD THIS
+        public string Email { get; set; } // <<<< ADD THIS PROPERTY
+
         [Required(ErrorMessage = "Address is required.")]
         [StringLength(255, ErrorMessage = "Address cannot exceed 255 characters.")]
         public string Address { get; set; }

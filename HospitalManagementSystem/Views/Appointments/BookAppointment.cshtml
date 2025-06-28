@@ -2,102 +2,100 @@
 
 @{
     ViewData["Title"] = "Book Appointment";
+    var successMessage = TempData["SuccessMessage"] as string;
 }
 
-<h1>Book Your Appointment</h1>
-
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            @* <-- FIX IS HERE: Changed from BookAppointment to Create *@
-            <div asp-validation-summary="All" class="text-danger"></div>
-
-            @if (TempData["SuccessMessage"] != null)
-            {
-                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
-            }
-
-            <div class="form-group mb-3">
-                <label for="isExistingPatient" class="form-label">Are you an existing patient?</label><br />
-                <input type="radio" id="isExistingPatientYes" name="isExistingPatient" value="true" @(Model.PatientId.HasValue ? "checked" : "") /> Yes
-                <input type="radio" id="isExistingPatientNo" name="isExistingPatient" value="false" class="ms-3" @(!Model.PatientId.HasValue ? "checked" : "") /> No
-            </div>
-
-            <div id="patientDetailsSection">
-                <div class="form-group mb-3">
-                    <label asp-for="PatientName" class="control-label"></label>
-                    <input asp-for="PatientName" class="form-control" />
-                    <span asp-validation-for="PatientName" class="text-danger"></span>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Book Your Appointment</h4>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="PatientEmail" class="control-label"></label>
-                    <input asp-for="PatientEmail" type="email" class="form-control" />
-                    <span asp-validation-for="PatientEmail" class="text-danger"></span>
+                <div class="card-body">
+                    <form asp-controller="Appointments" asp-action="BookAppointment">
+                        @if (!string.IsNullOrEmpty(successMessage))
+                        {
+                            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                @successMessage
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        }
+
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PatientName" class="form-label"></label>
+                                <input asp-for="PatientName" class="form-control" readonly />
+                                <span asp-validation-for="PatientName" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="PatientEmail" class="form-label"></label>
+                                <input asp-for="PatientEmail" type="email" class="form-control" readonly />
+                                <span asp-validation-for="PatientEmail" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PatientPhoneNumber" class="form-label"></label>
+                            <input asp-for="PatientPhoneNumber" class="form-control" readonly />
+                            <span asp-validation-for="PatientPhoneNumber" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="AppointmentDate" class="form-label"></label>
+                            <select asp-for="AppointmentDate" asp-items="ViewBag.AppointmentDates" class="form-select" id="appointmentDate" required>
+                                <option value="">-- Select Date --</option>
+                            </select>
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DepartmentId" class="form-label">Choose Department</label>
+                            <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-select" id="departmentDropdown" required>
+                                <option value="">-- Select Department --</option>
+                            </select>
+                            <span asp-validation-for="DepartmentId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="DoctorId" class="form-label">Choose Doctor (Optional)</label>
+                            <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-select" id="doctorDropdown">
+                                <option value="">-- Select Doctor --</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                            <div id="doctorWorkingHours" class="text-info small mt-1"></div>
+                        </div>
+
+                        <div class="mb-3" id="timeSlotGroup" style="display:none;">
+                            <label asp-for="AppointmentTime" class="form-label">Choose Time Slot</label>
+                            <select asp-for="AppointmentTime" asp-items="ViewBag.AvailableTimeSlots" class="form-select" id="timeSlotDropdown" required>
+                                <option value="">-- Select Time Slot --</option>
+                            </select>
+                            <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                            <div id="noTimeSlotsMessage" class="text-warning small mt-1" style="display:none;">No available slots for the selected doctor on this date.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Reason" class="form-label"></label>
+                            <textarea asp-for="Reason" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Reason" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary me-md-2">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Home
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-calendar-plus me-1"></i>Book Appointment
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group mb-3">
-                    <label asp-for="PatientPhoneNumber" class="control-label"></label>
-                    <input asp-for="PatientPhoneNumber" class="form-control" />
-                    <span asp-validation-for="PatientPhoneNumber" class="text-danger"></span>
-                </div>
             </div>
-
-            <div id="existingPatientLookupSection" style="display:none;">
-                <div class="form-group mb-3">
-                    <label for="PatientId" class="control-label">Existing Patient ID (Optional - for direct lookup)</label>
-                    <input asp-for="PatientId" class="form-control" />
-                    <span asp-validation-for="PatientId" class="text-danger"></span>
-                    <small class="text-muted">In a real app, this would be a lookup, not manual input.</small>
-                </div>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="AppointmentDate" class="control-label"></label>
-                <select asp-for="AppointmentDate" asp-items="ViewBag.AppointmentDates" class="form-control" id="appointmentDate" required></select>
-                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="DepartmentId" class="control-label">Choose Department (if no specific doctor)</label>
-                <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-control" id="departmentDropdown">
-                    <option value="">-- Select Department --</option>
-                </select>
-                <span asp-validation-for="DepartmentId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="DoctorId" class="control-label">Choose Doctor (Optional)</label>
-                <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-control" id="doctorDropdown">
-                    <option value="">-- Select Doctor --</option>
-                </select>
-                <span asp-validation-for="DoctorId" class="text-danger"></span>
-                <div id="doctorWorkingHours" class="text-info mt-1"></div>
-            </div>
-
-            <div class="form-group mb-3" id="timeSlotGroup" style="display:none;">
-                <label asp-for="AppointmentTime" class="control-label">Choose Time Slot</label>
-                <select asp-for="AppointmentTime" asp-items="ViewBag.AvailableTimeSlots" class="form-control" id="timeSlotDropdown" required>
-                    <option value="">-- Select Time Slot --</option>
-                </select>
-                <span asp-validation-for="AppointmentTime" class="text-danger"></span>
-                <div id="noTimeSlotsMessage" class="text-warning mt-1" style="display:none;">No available slots for the selected doctor on this date.</div>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Reason" class="control-label"></label>
-                <textarea asp-for="Reason" class="form-control"></textarea>
-                <span asp-validation-for="Reason" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <input type="submit" value="Book Appointment" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-controller="Home" asp-action="Index">Back to Home</a>
 </div>
 
 @section Scripts {
@@ -107,24 +105,6 @@
 
     <script>
         $(document).ready(function () {
-            function togglePatientSections() {
-                if ($('#isExistingPatientYes').is(':checked')) {
-                    $('#patientDetailsSection').hide();
-                    $('#existingPatientLookupSection').show();
-                    $('#PatientName').val('');
-                    $('#PatientEmail').val('');
-                    $('#PatientPhoneNumber').val('');
-                } else {
-                    $('#patientDetailsSection').show();
-                    $('#existingPatientLookupSection').hide();
-                    $('#PatientId').val('');
-                }
-            }
-            togglePatientSections();
-            $('input[name="isExistingPatient"]').change(function () {
-                togglePatientSections();
-            });
-
             let allDoctorsData = [];
 
             $('#departmentDropdown').change(function () {
@@ -139,9 +119,9 @@
                     $.getJSON('/Appointments/GetDoctorsByDepartment?departmentId=' + departmentId, function (data) {
                         allDoctorsData = data;
                         $.each(data, function (key, entry) {
-                            $('#doctorDropdown').append($('<option></option>').val(entry.id).text(entry.fullName)); // Use fullName
+                            $('#doctorDropdown').append($('<option></option>').val(entry.id).text(entry.fullName));
                         });
-                        $('#timeSlotGroup').show(); // Show time slot dropdown for department-only selection
+                        $('#timeSlotGroup').show();
                         $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot (Any Available in Dept.) --'));
                         $('#noTimeSlotsMessage').hide();
                     });
@@ -182,39 +162,10 @@
                     $('#timeSlotGroup').show();
                     $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot (Any Available in Dept.) --'));
                     $('#noTimeSlotsMessage').hide();
-                }
-                else {
+                } else {
                     $('#timeSlotGroup').hide();
                 }
             });
-
-            $('#doctorDropdown').change(function() {
-                var doctorId = $(this).val();
-                if (doctorId) {
-                    $('#timeSlotGroup').show();
-                    $('#appointmentDate').trigger('change');
-                } else {
-                    if ($('#departmentDropdown').val() && $('#appointmentDate').val()) {
-                            $('#timeSlotGroup').show();
-                            $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot (Any Available in Dept.) --'));
-                            $('#noTimeSlotsMessage').hide();
-                    } else {
-                        $('#timeSlotGroup').hide();
-                        $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot --'));
-                        $('#noTimeSlotsMessage').hide();
-                    }
-                }
-            });
-
-            if ('@Model.DoctorId' !== '' || ('@Model.DepartmentId' !== '' && '@Model.AppointmentDate' !== '@DateTime.MinValue')) {
-                $('#timeSlotGroup').show();
-            } else {
-                $('#timeSlotGroup').hide();
-            }
-
-            $('#departmentDropdown').trigger('change');
-            $('#doctorDropdown').trigger('change');
-            $('#appointmentDate').trigger('change');
         });
     </script>
 }

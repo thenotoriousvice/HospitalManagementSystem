@@ -22,6 +22,8 @@ namespace HospitalManagementSystem.Repository.Data
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Patient> Patients { get; set; }
 
+        public DbSet<Bill> Bills { get; set; }
+
         /// <summary>
         /// This method configures the database model using the Fluent API.
         /// It includes all relationship mappings and constraints from both original DbContext files.
@@ -40,7 +42,7 @@ namespace HospitalManagementSystem.Repository.Data
             // Configure the relationship for BookAppointment and Appointment
             // Assuming Appointment has a foreign key to BookAppointment.
             // This reflects the change from Patient to BookAppointment model for appointments.
-            modelBuilder.Entity<BookedAppointment>()
+            modelBuilder.Entity<Patient>()
                 .HasMany(b => b.Appointments)
                 .WithOne(a => a.Patient) // Assuming 'Patient' navigation property in Appointment now refers to BookAppointment
                 .HasForeignKey(a => a.PatientId) // PatientId in Appointment now points to BookAppointment's Id
@@ -92,6 +94,15 @@ namespace HospitalManagementSystem.Repository.Data
                 .WithMany() // A department can have many appointments, but we don't need a navigation property on Department.
                 .HasForeignKey(a => a.DepartmentId)
                 .OnDelete(DeleteBehavior.SetNull); // If a Department is deleted, the Appointment's DepartmentId is set to null.
+
+
+            // NEW: Relationship between Appointment and Patient
+            modelBuilder.Entity<Appointment>()
+                .HasOne(a => a.Patient)          // An Appointment has one Patient
+                .WithMany(p => p.Appointments)   // A Patient can have many Appointments
+                .HasForeignKey(a => a.PatientId) // Foreign key in Appointment is PatientId
+                .OnDelete(DeleteBehavior.Restrict); // Using Restrict is often safer to prevent accidental deletion cascades.
+                                                    // If PatientId is nullable, you could use .SetNull instead if that's desired behavior.
             #endregion
 
 

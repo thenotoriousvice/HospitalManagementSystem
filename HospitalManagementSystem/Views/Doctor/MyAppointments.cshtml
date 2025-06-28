@@ -1,6 +1,14 @@
 ﻿@using HospitalManagementSystem.Repository.Models
 @model IEnumerable<HospitalManagementSystem.Repository.Models.Appointment>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @{
     ViewData["Title"] = "My Scheduled Appointments";
 }
@@ -47,14 +55,43 @@ else
                     </td>
                     <td>@(item.Department?.Name ?? "N/A")</td>
                     <td>@Html.DisplayFor(modelItem => item.Reason)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Status)</td>
                     <td>
-                        @* Logic for Doctors to Approve/Reject/Cancel appointments from this view *@
+                        @* --- MODIFICATION 1: Update Appointment Status Display Logic --- *@
+                        @switch (item.Status)
+                        {
+                            case AppointmentStatus.Pending:
+                                <span class="badge bg-warning text-dark">Pending</span>
+                                break;
+                            case AppointmentStatus.Approved:
+                                <span class="badge bg-success">Approved</span>
+                                break;
+                            case AppointmentStatus.Rejected:
+                                <span class="badge bg-danger">Rejected</span>
+                                break;
+                            case AppointmentStatus.Cancelled:
+                                <span class="badge bg-secondary">Cancelled</span>
+                                break;
+                            case AppointmentStatus.Completed:
+                                <span class="badge bg-info">Completed</span>
+                                break;
+                            case AppointmentStatus.PaymentPending: 
+                                <span class="badge bg-primary">Payment Pending</span>
+                                break;
+                            case AppointmentStatus.PaymentCompleted: 
+                                <span class="badge bg-success">Payment Completed</span>
+                                break;
+                            default:
+                                <span>@item.Status</span>
+                                break;
+                        }
+                    </td>
+                    <td>
+                        @* Logic for Doctors to Approve/Reject/Cancel/Complete/Upload Bill appointments from this view *@
                         @if (item.Status == AppointmentStatus.Pending)
                         {
                             <form asp-controller="Doctor" asp-action="Approve" method="post" class="d-inline">
                                 <input type="hidden" name="id" value="@item.Id" />
-                                <div class="d-flex align-items-center mb-2"> @* Added mb-2 for spacing *@
+                                <div class="d-flex align-items-center mb-2">
                                     <input type="time" name="approvedTimeString" class="form-control me-2" style="width: auto;" required />
                                     <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Are you sure you want to approve this appointment and set this time?');">Approve</button>
                                 </div>
@@ -63,19 +100,36 @@ else
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this appointment?');">Reject</button>
                             </form>
-                        }
-                        @* Doctors can also cancel appointments from this view, regardless of status (unless completed). *@
-                        @if (item.Status == AppointmentStatus.Pending || item.Status == AppointmentStatus.Approved)
-                        {
-                            <form asp-controller="Doctor" asp-action="Cancel" method="post" class="d-inline mt-2"> @* Added mt-2 for spacing *@
+                            <form asp-controller="Doctor" asp-action="Cancel" method="post" class="d-inline mt-2">
                                 <input type="hidden" name="id" value="@item.Id" />
                                 <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to cancel this appointment?');">Cancel</button>
                             </form>
                         }
-                        else if (item.Status == AppointmentStatus.Cancelled || item.Status == AppointmentStatus.Rejected || item.Status == AppointmentStatus.Approved)
+                        else if (item.Status == AppointmentStatus.Approved)
                         {
-                            <span>-</span> @* Display a dash or current status for completed/cancelled/rejected appointments *@
+                            @* --- MODIFICATION 2a: Add Complete Appointment button for Approved Appointments --- *@
+                            <form asp-controller="Doctor" asp-action="Complete" method="post" class="d-inline me-2">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Are you sure you want to mark this appointment as Completed?');">Complete</button>
+                            </form>
+                            <form asp-controller="Doctor" asp-action="Cancel" method="post" class="d-inline mt-2">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to cancel this appointment?');">Cancel</button>
+                            </form>
                         }
+                        @* --- MODIFICATION 2b: Add "Upload Bill" button for Completed and Payment Pending Appointments --- *@
+                        else if (item.Status == AppointmentStatus.Completed || item.Status == AppointmentStatus.PaymentPending)
+                        {
+                            <a asp-controller="Billing" asp-action="Index" asp-route-patientId="@item.Patient.PatientId" asp-route-appointmentId="@item.Id" class="btn btn-primary btn-sm">
+                                <i class="bi bi-receipt"></i> Upload/View Bill
+                            </a>
+                        }
+                        else if (item.Status == AppointmentStatus.Cancelled || item.Status == AppointmentStatus.Rejected || item.Status == AppointmentStatus.PaymentCompleted)
+                        {
+                            @* Display a dash or current status for completed/cancelled/rejected/payment completed appointments where no further actions are typically needed by doctor *@
+                            <span>-</span>
+                        }
+                        @* Add other specific actions for other statuses if needed *@
                     </td>
                 </tr>
             }

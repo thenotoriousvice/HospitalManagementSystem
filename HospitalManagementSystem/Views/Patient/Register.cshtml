@@ -42,6 +42,12 @@
         </div>
 
         <div class="mb-3">
+            <label asp-for="Email" class="form-label">Email Address</label>
+            <input asp-for="Email" type="email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
             <label asp-for="Address" class="form-label">Address</label>
             <input asp-for="Address" type="text" class="form-control" />
             <span asp-validation-for="Address" class="text-danger"></span>
@@ -49,7 +55,7 @@
 
         <div class="mb-4">
             <label asp-for="MedicalHistory" class="form-label">Medical History</label>
-<textarea asp-for="MedicalHistory" class="form-control" rows="5"></textarea>
+            <textarea asp-for="MedicalHistory" class="form-control" rows="5"></textarea>
             <span asp-validation-for="MedicalHistory" class="text-danger"></span>
         </div>
 

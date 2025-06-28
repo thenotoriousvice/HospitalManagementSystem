@@ -15,6 +15,7 @@ namespace HospitalManagementSystem.BusinessLogic.Interfaces
         Task<List<TimeSpan>> GetAvailableTimeSlotsAsync(int doctorId, DateTime date);
         Task<List<Appointment>> GetPatientAppointmentsAsync(string email, string phoneNumber);
         Task<IdentityResult> CancelAppointmentAsync(int appointmentId);
+        Task<Patient> GetPatientByUserIdAsync(string userId);
 
         // New method for PatientController to get appointments by patient ID
         Task<IEnumerable<Appointment>> GetAppointmentsByPatientIdAsync(int patientId); // Added this line
@@ -27,5 +28,10 @@ namespace HospitalManagementSystem.BusinessLogic.Interfaces
         Task<IdentityResult> ApproveAppointmentAsync(int appointmentId, TimeSpan approvedTime);
         Task<IdentityResult> RejectAppointmentAsync(int appointmentId);
         Task<IEnumerable<Appointment>> GetAllAppointmentsForDoctorAsync(int doctorId);
+
+        Task<bool> UpdateAppointmentStatusAsync(int id, AppointmentStatus newStatus);
+        Task<bool> CompleteAppointmentAsync(int appointmentId);
+
+
     }
 }
