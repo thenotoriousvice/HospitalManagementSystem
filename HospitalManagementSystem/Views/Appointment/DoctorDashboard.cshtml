@@ -1,0 +1,112 @@
+﻿@using HospitalManagementSystem.Repository.Models
+@model IEnumerable<HospitalManagementSystem.Repository.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Doctor Dashboard";
+}
+
+<h1>Doctor Dashboard</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-info">@TempData["Message"]</div>
+}
+
+<div class="mb-4">
+    <form asp-action="DoctorDashboard" method="get">
+        <label for="doctorId" class="form-label">Filter by Doctor:</label>
+        <select name="doctorId" id="doctorId" asp-items="ViewBag.Doctors" class="form-control d-inline-block w-auto me-2">
+            <option value="">-- All Doctors --</option>
+        </select>
+
+        <label for="departmentFilterId" class="form-label ms-3">Or Filter by Department:</label>
+        <select name="departmentFilterId" id="departmentFilterId" asp-items="ViewBag.Departments" class="form-control d-inline-block w-auto me-2">
+            <option value="">-- All Departments --</option>
+        </select>
+
+        <button type="submit" class="btn btn-info">Apply Filter</button>
+    </form>
+</div>
+
+<h3>Pending Appointments</h3>
+
+@if (!Model.Any())
+{
+    <p>No pending appointments for the selected filters.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Contact Info</th>
+                <th>Requested Date</th>
+                <th>Requested Time</th>
+                <th>Reason</th>
+                <th>Assigned Doctor</th>
+                <th>Requested Department</th>
+                <th>Set Time & Action</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.PatientName) (@Html.DisplayFor(modelItem => item.PatientEmail))</td>
+                    <td>@Html.DisplayFor(modelItem => item.PatientPhoneNumber)</td>
+                    <td>@Html.DisplayFor(modelItem => item.AppointmentDate)</td>
+                    <td>@(item.AppointmentTime?.ToString("hh\\:mm tt") ?? "Not Set")</td>
+                    <td>@Html.DisplayFor(modelItem => item.Reason)</td>
+                    <td>@(item.Doctor?.FullName ?? "Unassigned")</td> @* Use FullName *@
+                    <td>@(item.Department?.Name ?? "N/A")</td>
+                    <td>
+                        @if (item.Status == AppointmentStatus.Pending)
+                        {
+                            <form asp-action="Approve" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <div class="d-flex align-items-center">
+                                    <input type="time" name="approvedTimeString" class="form-control me-2" style="width: auto;" required />
+                                    <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Are you sure you want to approve this appointment and set this time?');">Approve</button>
+                                </div>
+                            </form>
+                            <form asp-action="Reject" method="post" class="d-inline ms-2">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this appointment?');">Reject</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span>@item.Status.ToString()</span>
+                        }
+                    </td>
+                    <td>
+                        <form asp-action="Cancel" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Are you sure you want to cancel this appointment?');">Cancel</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#doctorId').change(function () {
+                if ($(this).val()) {
+                    $('#departmentFilterId').val('');
+                }
+            });
+
+            $('#departmentFilterId').change(function () {
+                if ($(this).val()) {
+                    $('#doctorId').val('');
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,485 @@
+﻿:root {
+    --primary-blue: #42A5F5; /* A vibrant blue for buttons, links, highlights */
+    --dark-blue: #2196F3;
+    --light-blue-bg: #E3F2FD; /* Very light blue for overall background */
+    --gradient-start: #BBDEFB; /* Light blue for the left panel gradient start */
+    --gradient-end: #90CAF9; /* Slightly darker blue for the left panel gradient end */
+    --text-dark: #34495e; /* Dark grey for general text */
+    --text-light: #F0F4C3; /* Very light yellow/blue for text on dark backgrounds */
+    --text-muted: #607D8B; /* Muted grey for secondary text */
+    --white: #FFFFFF;
+    --shadow-subtle: rgba(0, 0, 0, 0.08); /* Light shadow for cards */
+    --shadow-medium: rgba(0, 0, 0, 0.15);
+    --border-light: #CFD8DC; /* Light grey for borders */
+}
+
+body {
+    background-color: var(--light-blue-bg); /* Overall page background */
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh; /* Ensure body takes full viewport height */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Adjust main to grow and center the content wrapper */
+main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* Add some padding around the main content */
+    position: relative; /* For z-index to work against fixed header */
+    z-index: 1;
+}
+
+/* The wrapper for the entire left/right login layout */
+.registration-page-wrapper {
+    display: flex;
+    background-color: var(--white); /* Fallback, but gradient will cover left */
+    border-radius: 25px; /* Large border-radius for the entire container */
+    box-shadow: 0 15px 40px var(--shadow-subtle);
+    overflow: hidden; /* Ensures inner content respects rounded corners */
+    width: 100%;
+    max-width: 1050px; /* --- INCREASED WIDTH FOR FORM CONTENT --- */
+    min-height: 550px; /* Ensure a minimum height for visual balance */
+}
+
+/* Left side: Marketing panel */
+.marketing-panel {
+    width: 350px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Pushes content to the top */
+    align-items: center; /* Changed to center content horizontally */
+    position: relative;
+    color: var(--text-dark);
+    border-top-left-radius: 25px;
+    border-bottom-left-radius: 25px;
+    min-height: 100%;
+    padding-top: 60px;
+}
+
+    .marketing-panel h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin-bottom: 20px;
+        color: var(--text-dark);
+        position: relative;
+        z-index: 2;
+        padding-right: 0; /* Changed to 0 to align with center */
+        text-align: center; /* Center the text */
+    }
+
+    .marketing-panel p.marketing-stats {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-top: 20px; /* Adjusted margin to flow below images */
+        margin-bottom: 20px; /* Adjusted margin */
+        position: relative; /* Keep relative to flow */
+        z-index: 2;
+        text-align: center; /* Center the text */
+    }
+
+    .marketing-panel .sparkle-icon {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        color: var(--primary-blue);
+        z-index: 1;
+    }
+
+.sparkle-top-right {
+    top: 30px;
+    right: 30px;
+}
+
+.sparkle-bottom-left {
+    bottom: 30px;
+    left: 30px;
+}
+
+/* Modified .doctor-image for stacking and increased height */
+.marketing-panel .doctor-image {
+    position: relative; /* Changed to relative to allow natural flow */
+    /* Removed top, left, transform properties that caused overlap */
+    max-width: 300px;
+    max-height: 520px; /* Increased height for both images */
+    height: auto; /* Keep this to maintain aspect ratio */
+    z-index: 1;
+    margin-bottom: 20px; /* Add space between images when stacked */
+}
+
+.marketing-panel .copyright-text {
+    position: relative; /* Changed to relative to flow below other content */
+    bottom: auto; /* Remove absolute bottom positioning */
+    left: auto; /* Remove absolute left positioning */
+    margin-top: auto; /* Push to the bottom naturally with flex-direction column */
+    padding-top: 20px; /* Add some space from content above */
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    z-index: 2;
+    text-align: center; /* Center the copyright text */
+}
+
+    .marketing-panel .copyright-text a {
+        color: var(--primary-blue);
+        text-decoration: none;
+    }
+
+        .marketing-panel .copyright-text a:hover {
+            text-decoration: underline;
+        }
+
+/* Right side: Form Panel --- INCREASED FORM CONTENT SIZE --- */
+.form-card-panel {
+    flex: 1;
+    width: 600px; /* This width will be overridden by flex:1 and max-width on parent, but good to keep. */
+    background-color: var(--white);
+    padding: 50px; /* --- INCREASED PADDING --- */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    border-radius: 25px;
+    box-shadow: 0 15px 40px var(--shadow-subtle);
+    position: relative;
+    z-index: 2;
+    overflow-y: auto;
+}
+
+    .form-card-panel h1.form-header {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem; /* --- SLIGHTLY INCREASED FONT SIZE --- */
+        font-weight: 800;
+        color: var(--primary-blue);
+        margin-bottom: 8px; /* Adjusted margin */
+        text-align: left;
+    }
+
+    .form-card-panel hr.header-underline {
+        border: none;
+        border-top: 3px solid var(--primary-blue);
+        width: 60px; /* --- SLIGHTLY INCREASED HR WIDTH --- */
+        margin-left: 0;
+        margin-bottom: 35px; /* Adjusted margin */
+    }
+
+.form-group {
+    margin-bottom: 22px; /* --- SLIGHTLY INCREASED MARGIN BETWEEN GROUPS --- */
+}
+
+    .form-group label {
+        font-weight: 500;
+        color: var(--text-dark);
+        margin-bottom: 10px; /* --- INCREASED LABEL MARGIN --- */
+        display: block;
+        text-align: left;
+        font-size: 1rem; /* --- SLIGHTLY INCREASED LABEL FONT SIZE --- */
+    }
+
+.form-control {
+    border-radius: 10px;
+    padding: 14px 18px; /* --- INCREASED INPUT PADDING --- */
+    border: 1px solid var(--border-light);
+    transition: all 0.3s ease;
+    box-shadow: none;
+    font-size: 1rem; /* --- SLIGHTLY INCREASED INPUT FONT SIZE --- */
+}
+
+    .form-control:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-blue), 0.25);
+        outline: none;
+    }
+
+.form-check {
+    margin-bottom: 22px; /* --- SLIGHTLY INCREASED MARGIN --- */
+    text-align: left;
+}
+
+.form-check-input {
+    border-radius: 5px;
+    border-color: var(--border-light);
+    width: 1.2em;
+    height: 1.2em;
+}
+
+    .form-check-input:checked {
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+
+.form-check-label {
+    font-size: 0.95rem; /* --- SLIGHTLY INCREASED CHECKBOX LABEL FONT SIZE --- */
+    color: var(--text-muted);
+    margin-left: 5px;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    padding: 15px 30px; /* --- INCREASED BUTTON PADDING --- */
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%;
+    font-size: 1.2rem; /* --- INCREASED BUTTON FONT SIZE --- */
+    margin-top: 15px; /* Adjusted margin */
+}
+
+    .btn-primary:hover {
+        background-color: var(--dark-blue);
+        border-color: var(--dark-blue);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(var(--primary-blue), 0.3);
+    }
+
+.text-danger {
+    font-size: 0.85rem; /* --- SLIGHTLY INCREASED ERROR TEXT FONT SIZE --- */
+    margin-top: 5px;
+    display: block;
+    text-align: left;
+    color: #dc3545;
+}
+
+.register-link-container {
+    margin-top: 30px; /* --- INCREASED MARGIN TOP --- */
+    font-size: 0.95rem; /* --- SLIGHTLY INCREASED FONT SIZE --- */
+    color: var(--text-muted);
+    text-align: center;
+}
+
+    .register-link-container a {
+        color: var(--primary-blue);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+        .register-link-container a:hover {
+            text-decoration: underline;
+        }
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .registration-page-wrapper {
+        flex-direction: column;
+        height: auto;
+        max-width: 550px; /* --- ADJUSTED MAX-WIDTH FOR TABLETS --- */
+        min-height: auto;
+    }
+
+    .marketing-panel {
+        width: 100%;
+        border-radius: 25px 25px 0 0;
+        padding: 30px 20px;
+        text-align: center;
+        align-items: center;
+        order: 1;
+        min-height: unset;
+        padding-bottom: 100px;
+        justify-content: center;
+    }
+
+        .marketing-panel h2 {
+            font-size: 1.8rem;
+            padding-right: 0;
+        }
+
+        .marketing-panel .doctor-image {
+            position: relative; /* Keep relative for mobile */
+            transform: none;
+            left: auto;
+            bottom: auto;
+            margin-top: 20px;
+            max-width: 250px;
+            margin-bottom: 20px; /* Space for images to stack */
+            z-index: 3;
+            height: auto; /* Ensure height scales */
+        }
+
+        .marketing-panel .copyright-text {
+            position: relative;
+            bottom: auto;
+            left: auto;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+    .form-card-panel {
+        width: 100%;
+        border-radius: 0 0 25px 25px;
+        order: 2;
+        padding: 40px 30px; /* --- ADJUSTED PADDING FOR TABLETS --- */
+        padding-top: 80px;
+    }
+
+        .form-card-panel h1.form-header,
+        .form-card-panel hr.header-underline {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+}
+
+@media (max-width: 767.98px) { /* Small devices (phones) */
+    .login-form-section {
+        padding: 25px;
+    }
+
+        .login-form-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .login-form-section hr {
+            margin-bottom: 20px;
+        }
+
+    .form-control {
+        padding: 10px 15px;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+    }
+}
+
+
+@media (max-width: 575.98px) {
+    .registration-page-wrapper {
+        margin: 10px;
+        border-radius: 15px;
+    }
+
+    .marketing-panel {
+        padding: 25px 15px;
+        border-radius: 15px 15px 0 0;
+        padding-bottom: 80px;
+    }
+
+        .marketing-panel h2 {
+            font-size: 1.6rem;
+        }
+
+        .marketing-panel .doctor-image {
+            max-width: 200px;
+            max-height: 350px; /* Adjusted height for mobile */
+            margin-bottom: 15px; /* Adjust spacing for smaller screens */
+            height: auto;
+        }
+
+    .form-card-panel {
+        padding: 30px 20px; /* --- ADJUSTED PADDING FOR PHONES --- */
+        border-radius: 0 0 15px 15px;
+        padding-top: 60px;
+    }
+
+        .form-card-panel h1.form-header {
+            font-size: 1.6rem;
+        }
+}
+
+--------------css-------------------------
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.your-footer-class { /* Replace with your actual footer's class or ID */
+    padding: 10px 0; /* Example: 10px top/bottom, 0 left/right */
+    /* Or specific paddings */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 50px; /* Example: Reduce this value */
+    /* Or */
+    min-height: 50px; /* Example: Reduce this value */
+    margin-bottom: 5px; /* Reduce default margins */
+    padding: 0;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+/* Removed the generic .your-footer-class and used the specific ID */
+#mainAppFooter {
+    /* Set your desired fixed height and padding */
+    height: 50px;
+    min-height: 50px; /* Use min-height if content varies but you want a minimum */
+    padding: 8px 0;
+    line-height: 24px; /* Adjust line-height to vertically center text if needed */
+    /* Ensure background and text colors are explicitly set */
+    background-color: #f8f9fa; /* Example: light grey background */
+    color: #6c757d; /* Example: muted text color */
+    /* Important: Override any potential margins or positioning from other rules */
+    margin: 0 !important;
+    position: relative; /* Or 'fixed' if it's always at the bottom of the viewport */
+    bottom: 0;
+    width: 100%;
+    box-shadow: none !important; /* Remove any accidental shadows */
+}
+
+    /* If your footer has a container inside it, style that too */
+    #mainAppFooter .container {
+        height: 100%; /* Make sure the container fills the footer's height */
+        display: flex;
+        align-items: center; /* Vertically center content */
+        justify-content: center; /* Horizontally center content */
+        padding: 0 15px; /* Add horizontal padding if needed */
+    }
+
+/* Adjust the body margin-bottom to account for the fixed footer height */
+body {
+    margin-bottom: 40px; /* This should match the 'height' of your footer */
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.your-footer-class { /* Replace with your actual footer's class or ID */
+    padding: 10px 0; /* Example: 10px top/bottom, 0 left/right */
+    /* Or specific paddings */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 50px; /* Example: Reduce this value */
+    /* Or */
+    min-height: 50px; /* Example: Reduce this value */
+    margin-bottom: 5px; /* Reduce default margins */
+    padding: 0;
+}

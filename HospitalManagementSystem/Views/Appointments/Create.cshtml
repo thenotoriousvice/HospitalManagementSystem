@@ -1,0 +1,219 @@
+﻿@model HospitalManagementSystem.Repository.Models.Appointment
+
+@{
+    ViewData["Title"] = "Book Appointment";
+}
+
+<h1>Book Your Appointment</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+
+            <div class="form-group mb-3">
+                <label for="isExistingPatient" class="form-label">Are you an existing patient?</label><br />
+                <input type="radio" id="isExistingPatientYes" name="isExistingPatient" value="true" @(Model.PatientId.HasValue ? "checked" : "") /> Yes
+                <input type="radio" id="isExistingPatientNo" name="isExistingPatient" value="false" class="ms-3" @(!Model.PatientId.HasValue ? "checked" : "") /> No
+            </div>
+
+            <div id="patientDetailsSection">
+                <div class="form-group mb-3">
+                    <label asp-for="PatientName" class="control-label"></label>
+                    <input asp-for="PatientName" class="form-control" />
+                    <span asp-validation-for="PatientName" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PatientEmail" class="control-label"></label>
+                    <input asp-for="PatientEmail" type="email" class="form-control" />
+                    <span asp-validation-for="PatientEmail" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="PatientPhoneNumber" class="control-label"></label>
+                    <input asp-for="PatientPhoneNumber" class="form-control" />
+                    <span asp-validation-for="PatientPhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div id="existingPatientLookupSection" style="display:none;">
+                <div class="form-group mb-3">
+                    <label for="PatientId" class="control-label">Existing Patient ID (Optional - for direct lookup)</label>
+                    <input asp-for="PatientId" class="form-control" />
+                    <span asp-validation-for="PatientId" class="text-danger"></span>
+                    <small class="text-muted">In a real app, this would be a lookup, not manual input.</small>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="AppointmentDate" class="control-label"></label>
+                <select asp-for="AppointmentDate" asp-items="ViewBag.AppointmentDates" class="form-control" id="appointmentDate" required></select>
+                <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DepartmentId" class="control-label">Choose Department (if no specific doctor)</label>
+                <select asp-for="DepartmentId" asp-items="ViewBag.Departments" class="form-control" id="departmentDropdown">
+                    <option value="">-- Select Department --</option>
+                </select>
+                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DoctorId" class="control-label">Choose Doctor (Optional)</label>
+                <select asp-for="DoctorId" asp-items="ViewBag.Doctors" class="form-control" id="doctorDropdown">
+                    <option value="">-- Select Doctor --</option>
+                </select>
+                <span asp-validation-for="DoctorId" class="text-danger"></span>
+                <div id="doctorWorkingHours" class="text-info mt-1"></div>
+            </div>
+
+            <div class="form-group mb-3" id="timeSlotGroup" style="display:none;">
+                <label asp-for="AppointmentTime" class="control-label">Choose Time Slot</label>
+                <select asp-for="AppointmentTime" asp-items="ViewBag.AvailableTimeSlots" class="form-control" id="timeSlotDropdown" required>
+                    <option value="">-- Select Time Slot --</option>
+                </select>
+                <span asp-validation-for="AppointmentTime" class="text-danger"></span>
+                <div id="noTimeSlotsMessage" class="text-warning mt-1" style="display:none;">No available slots for the selected doctor on this date.</div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Reason" class="control-label"></label>
+                <textarea asp-for="Reason" class="form-control"></textarea>
+                <span asp-validation-for="Reason" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <input type="submit" value="Book Appointment" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index">Back to Home</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+            function togglePatientSections() {
+                if ($('#isExistingPatientYes').is(':checked')) {
+                    $('#patientDetailsSection').hide();
+                    $('#existingPatientLookupSection').show();
+                    $('#PatientName').val('');
+                    $('#PatientEmail').val('');
+                    $('#PatientPhoneNumber').val('');
+                } else {
+                    $('#patientDetailsSection').show();
+                    $('#existingPatientLookupSection').hide();
+                    $('#PatientId').val('');
+                }
+            }
+            togglePatientSections();
+            $('input[name="isExistingPatient"]').change(function () {
+                togglePatientSections();
+            });
+
+            let allDoctorsData = [];
+
+            $('#departmentDropdown').change(function () {
+                var departmentId = $(this).val();
+                $('#doctorDropdown').empty().append($('<option></option>').val('').text('-- Select Doctor --'));
+                $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot --'));
+                $('#timeSlotGroup').hide();
+                $('#noTimeSlotsMessage').hide();
+                $('#doctorWorkingHours').text('');
+
+                if (departmentId) {
+                    $.getJSON('/Appointments/GetDoctorsByDepartment?departmentId=' + departmentId, function (data) {
+                        allDoctorsData = data;
+                        $.each(data, function (key, entry) {
+                            $('#doctorDropdown').append($('<option></option>').val(entry.id).text(entry.fullName)); // Use fullName
+                        });
+                        $('#timeSlotGroup').show(); // Show time slot dropdown for department-only selection
+                        $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot (Any Available in Dept.) --'));
+                        $('#noTimeSlotsMessage').hide();
+                    });
+                } else {
+                     $('#doctorDropdown').empty().append($('<option></option>').val('').text('-- Select Doctor --'));
+                     $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot --'));
+                     $('#timeSlotGroup').hide();
+                     $('#noTimeSlotsMessage').hide();
+                }
+            });
+
+            $('#doctorDropdown, #appointmentDate').change(function () {
+                var doctorId = $('#doctorDropdown').val();
+                var appointmentDate = $('#appointmentDate').val();
+                $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot --'));
+                $('#noTimeSlotsMessage').hide();
+
+                $('#doctorWorkingHours').text('');
+                if (doctorId) {
+                    var selectedDoctor = allDoctorsData.find(d => d.id == doctorId);
+                    if (selectedDoctor && selectedDoctor.workingHoursStart && selectedDoctor.workingHoursEnd) {
+                        $('#doctorWorkingHours').text('Working Hours: ' + selectedDoctor.workingHoursStart + ' - ' + selectedDoctor.workingHoursEnd);
+                    }
+                }
+
+                if (doctorId && appointmentDate) {
+                    $('#timeSlotGroup').show();
+                    $.getJSON('/Appointments/GetDoctorAvailableTimeSlots?doctorId=' + doctorId + '&appointmentDate=' + appointmentDate, function (data) {
+                        if (data.length > 0) {
+                            $.each(data, function (key, entry) {
+                                $('#timeSlotDropdown').append($('<option></option>').val(entry.value).text(entry.text));
+                            });
+                        } else {
+                            $('#noTimeSlotsMessage').show();
+                        }
+                    });
+                } else if (!doctorId && $('#departmentDropdown').val() && appointmentDate) {
+                    $('#timeSlotGroup').show();
+                    $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot (Any Available in Dept.) --'));
+                    $('#noTimeSlotsMessage').hide();
+                }
+                else {
+                    $('#timeSlotGroup').hide();
+                }
+            });
+
+             $('#doctorDropdown').change(function() {
+                var doctorId = $(this).val();
+                if (doctorId) {
+                    $('#timeSlotGroup').show();
+                    $('#appointmentDate').trigger('change');
+                } else {
+                    if ($('#departmentDropdown').val() && $('#appointmentDate').val()) {
+                         $('#timeSlotGroup').show();
+                         $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot (Any Available in Dept.) --'));
+                         $('#noTimeSlotsMessage').hide();
+                    } else {
+                        $('#timeSlotGroup').hide();
+                        $('#timeSlotDropdown').empty().append($('<option></option>').val('').text('-- Select Time Slot --'));
+                        $('#noTimeSlotsMessage').hide();
+                    }
+                }
+            });
+
+            if ('@Model.DoctorId' !== '' || ('@Model.DepartmentId' !== '' && '@Model.AppointmentDate' !== '@DateTime.MinValue')) {
+                $('#timeSlotGroup').show();
+            } else {
+                $('#timeSlotGroup').hide();
+            }
+
+            $('#departmentDropdown').trigger('change');
+            $('#doctorDropdown').trigger('change');
+            $('#appointmentDate').trigger('change');
+        });
+    </script>
+}

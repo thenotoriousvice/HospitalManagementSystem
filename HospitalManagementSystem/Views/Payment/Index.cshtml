@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "Bills & Payments";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4 fs-3 fw-bold text-primary">Bills & Payments</h1>
+    <hr class="mb-5" />
+
+    <div class="row g-4">
+        <!-- Due Bills Section -->
+        <div class="col-12">
+            <div class="card shadow-sm rounded-lg mb-4">
+                <div class="card-header bg-warning text-white py-3 rounded-top-lg">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-exclamation-circle me-2"></i>Due Bills</h4>
+                </div>
+                <div class="card-body p-4">
+                    @* Placeholder for actual Due Bills data *@
+                    @if (true) @* Replace 'true' with your Model check for Due Bills data *@
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Bill ID</th>
+                                        <th scope="col">Service</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Due Date</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#INV001</td>
+                                        <td>Consultation Fee</td>
+                                        <td>$50.00</td>
+                                        <td>2025-07-01</td>
+                                        <td><span class="badge bg-danger">Due</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary px-3 rounded-pill">Pay Now</a>
+                                            <a href="#" class="btn btn-sm btn-outline-info px-3 rounded-pill ms-2">Receipt</a> @* Placeholder for Receipt link *@
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#INV002</td>
+                                        <td>Medication</td>
+                                        <td>$25.50</td>
+                                        <td>2025-07-05</td>
+                                        <td><span class="badge bg-danger">Due</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-primary px-3 rounded-pill">Pay Now</a>
+                                            <a href="#" class="btn btn-sm btn-outline-info px-3 rounded-pill ms-2">Receipt</a>
+                                        </td>
+                                    </tr>
+                                    @* Add more rows dynamically based on your model data *@
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mb-0" role="alert">
+                            You have no outstanding bills at this moment.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Paid Bills Section -->
+        <div class="col-12">
+            <div class="card shadow-sm rounded-lg">
+                <div class="card-header bg-success text-white py-3 rounded-top-lg">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-check-circle me-2"></i>Paid Bills</h4>
+                </div>
+                <div class="card-body p-4">
+                    @* Placeholder for actual Paid Bills data *@
+                    @if (true) @* Replace 'true' with your Model check for Paid Bills data *@
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col">Bill ID</th>
+                                        <th scope="col">Service</th>
+                                        <th scope="col">Amount</th>
+                                        <th scope="col">Payment Date</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#INV000</td>
+                                        <td>Initial Visit</td>
+                                        <td>$75.00</td>
+                                        <td>2025-06-20</td>
+                                        <td><span class="badge bg-success">Paid</span></td>
+                                        <td>
+                                            <a href="#" class="btn btn-sm btn-outline-info px-3 rounded-pill">View Receipt</a>
+                                        </td>
+                                    </tr>
+                                    @* Add more rows dynamically based on your model data *@
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-secondary mb-0" role="alert">
+                            You have no paid bills recorded yet.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-lg shadow">Back to Home</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

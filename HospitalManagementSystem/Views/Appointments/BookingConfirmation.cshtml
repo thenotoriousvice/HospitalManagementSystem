@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Booking Confirmation";
+}
+
+<h1>Appointment Booked Successfully!</h1>
+
+<div class="alert alert-success" role="alert">
+    Your appointment request has been submitted. The relevant doctor(s) will review your request and you will receive a notification (email/SMS) once it's approved.
+</div>
+
+<div>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary">Back to Home</a>
+    <a asp-action="Create" class="btn btn-secondary">Book Another Appointment</a>
+</div>

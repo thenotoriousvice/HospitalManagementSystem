@@ -1,0 +1,230 @@
+﻿@model IEnumerable<HospitalManagementSystem.Repository.Models.Doctor>
+
+@{
+    ViewData["Title"] = "Manage Doctors";
+}
+
+<style>
+    /* Custom CSS for Doctors Management Page */
+    .table-dark th {
+        vertical-align: middle;
+        text-align: center; /* Ensure headers are centered for centered columns */
+    }
+
+    #doctorsTable tbody td {
+        vertical-align: middle; /* Align content vertically in the middle */
+        padding: 0.6rem 0.8rem; /* Slightly reduced padding for table cells */
+        font-size: 0.9rem; /* Slightly smaller font for table data */
+    }
+
+    /* Specific column alignments */
+    #doctorsTable .text-center-col {
+        text-align: center;
+    }
+
+    .card-title {
+        font-size: 1.4rem; /* Reduced card title font size */
+        font-weight: 600;
+        margin-bottom: 0; /* Remove default bottom margin if not needed */
+    }
+
+    .alert {
+        margin-top: 1rem; /* Reduced space above alerts */
+        margin-bottom: 1rem; /* Reduced space below alerts */
+        border-left: 5px solid; /* A nice border on the left for alerts */
+        font-size: 0.95rem; /* Slightly smaller alert text */
+    }
+
+    .alert-success {
+        border-color: #28a745;
+    }
+
+    .alert-danger {
+        border-color: #dc3545;
+    }
+
+    .alert-info {
+        border-color: #17a2b8;
+    }
+
+    /* Search input styling */
+    .input-group > .form-control {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    .input-group > .btn {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    /* Actions button group styling */
+    .btn-group .btn {
+        margin-right: 0.25rem; /* Small space between grouped buttons */
+    }
+
+        .btn-group .btn:last-child {
+            margin-right: 0; /* No margin on the last button */
+        }
+
+    /* Reduced header and lead text sizing */
+    .page-header-container h1 {
+        font-size: 2.25rem; /* Equivalent to Bootstrap's h2 or h3 depending on context */
+        margin-bottom: 0.5rem; /* Small margin below header for the descriptive text */
+    }
+
+    .page-header-container p.lead-text {
+        font-size: 1.1rem; /* Smaller than lead, slightly larger than regular text */
+        margin-top: 0; /* Ensure no top margin */
+        margin-bottom: 0; /* Ensure no bottom margin */
+    }
+</style>
+
+<div class="container-fluid py-4">
+    <div class="row align-items-center mb-4 page-header-container">
+        <div class="col-md-7 text-start">
+            @* Explicitly setting text-start for consistent left alignment *@
+            <h1 class="text-primary fw-bold">
+                @* Removed mb-2 here, now managed by custom CSS *@
+                <i class="fas fa-user-md me-1 text-info"></i>Manage Doctors
+            </h1>
+            <p class="text-muted lead-text">Overview of all registered medical professionals in the system.</p>
+        </div>
+        <div class="col-md-5 text-end">
+            <a asp-controller="Admin" asp-action="RegisterDoctor" class="btn btn-primary btn-md shadow-sm">
+                <i class="fas fa-user-plus me-2"></i> Register New Doctor
+            </a>
+        </div>
+    </div>
+
+    @* Alerts for success/error messages, with slightly reduced margins *@
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+            <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm" role="alert">
+            <i class="fas fa-times-circle me-2"></i> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card shadow-lg rounded-4 border-0 mt-4 mb-4">
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+                <h5 class="card-title text-secondary">Registered Doctors <span class="badge bg-primary ms-2">@Model.Count()</span></h5>
+                <div class="input-group" style="max-width: 280px;">
+                    <input type="text" id="doctorSearchInput" class="form-control" placeholder="Search doctors..." aria-label="Search doctors">
+                    <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center py-4 rounded-3" role="alert">
+                    <h4 class="alert-heading h5"><i class="fas fa-info-circle me-3"></i>No Doctors Found!</h4>
+                    <p class="mb-0">There are currently no registered doctors to display. Click the "Register New Doctor" button to add one.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped align-middle" id="doctorsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Full Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone Number</th>
+                                <th scope="col">Qualification</th>
+                                <th scope="col" class="text-center-col">Experience (Years)</th>
+                                <th scope="col">Department</th>
+                                <th scope="col" class="text-center-col">Working Hours</th>
+                                <th scope="col" class="text-center-col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.IdentityUser.Email)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Qualification)</td>
+                                    <td class="text-center-col">@Html.DisplayFor(modelItem => item.ExperienceYears)</td>
+                                    <td>@Html.DisplayFor(modelItem => item.Department.Name)</td>
+                                    <td class="text-center-col">
+                                        @if (item.WorkingHoursStart.HasValue && item.WorkingHoursEnd.HasValue)
+                                        {
+                                            @(item.WorkingHoursStart.Value.ToString(@"hh\:mm") + " - " + item.WorkingHoursEnd.Value.ToString(@"hh\:mm"))
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted small">Not Set</span>
+                                        }
+                                    </td>
+                                    <td class="text-center-col">
+                                        <div class="d-flex justify-content-center">
+                                            <a asp-action="EditDoctor" asp-route-id="@item.IdentityUserId" class="btn btn-outline-info btn-sm me-2" title="Edit Doctor Profile">
+                                                <i class="fas fa-edit"></i> Edit
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger btn-sm delete-doctor-btn" data-id="@item.IdentityUserId" title="Delete Doctor">
+                                                <i class="fas fa-trash-alt"></i> Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        $(document).ready(function () {
+            $("#doctorSearchInput").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#doctorsTable tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+
+            $('.delete-doctor-btn').on('click', function (e) {
+                e.preventDefault();
+                var doctorId = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You are about to delete a doctor profile. This action cannot be undone!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        var form = $('<form/>', { action: '@Url.Action("DeleteDoctor", "Admin")', method: 'post', style: 'display:none;' });
+                        form.append($('<input/>', { type: 'hidden', name: 'id', value: doctorId }));
+                        $('body').append(form);
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+    @* Ensure you have jQuery and SweetAlert2 included in your project. *@
+    @* Example CDN links (place in _Layout.cshtml or before this script): *@
+    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+    @* <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> *@
+}

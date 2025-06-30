@@ -1,0 +1,234 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml"; @* Ensure your main layout is applied *@
+}
+
+<head>
+    @* Ensure Font Awesome is linked for icons if not already in _Layout.cshtml *@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    @* Link to your site.css for custom variables and styles *@
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body>
+    <div class="dashboard-page-wrapper">
+        @* Decorative sparkle icons for a touch of flair *@
+        
+        <div class="container my-5 p-5 bg-white rounded-4 shadow-lg dashboard-content-card">
+            @* Main content card with slightly transparent background and strong shadow *@
+
+            <div class="p-5 bg-light rounded-4 shadow-xl text-center mb-5 border border-primary border-opacity-25">
+                @* Header section with a lighter background, enhanced shadow, and a subtle border *@
+                <h1 class="display-4 text-primary fw-bold pb-2">
+                    <i class="fas fa-tachometer-alt me-3 text-info"></i>Admin Dashboard
+                </h1>
+                <p class="lead text-dark mb-3">Welcome, Administrator! Here you can manage the hospital system with ease.</p>
+                <hr class="my-4 border-top border-dark border-3 w-25 mx-auto">
+                @* Thicker, primary-colored horizontal rule for emphasis *@
+                <p class="mb-1 text-blue-darkest">A comprehensive overview and quick access to essential features.</p>
+            </div>
+
+            @* Section for Key Metrics - Visually prominent cards *@
+            <h2 class="text-center mb-4 text-primary fw-bold">Key Metrics</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+                <div class="col">
+                    <div class="card h-100 shadow-md rounded-3 border-0 bg-blue-lighter">
+                        @* Custom background color from site.css for card *@
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-users display-5 text-blue-deep mb-3"></i>
+                            @* Icons and text colors leverage site.css variables *@
+                            <h5 class="card-title text-dark-heading fw-bold">Total Patients</h5>
+                            <p class="card-text display-4 fw-bold text-blue-darkest">1,234</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-md rounded-3 border-0 bg-blue-lighter">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-user-md display-5 text-blue-deep mb-3"></i>
+                            <h5 class="card-title text-dark-heading fw-bold">Active Doctors</h5>
+                            <p class="card-text display-4 fw-bold text-blue-darkest">75</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="card h-100 shadow-md rounded-3 border-0 bg-blue-lighter">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-calendar-check display-5 text-blue-deep mb-3"></i>
+                            <h5 class="card-title text-dark-heading fw-bold">Today's Appointments</h5>
+                            <p class="card-text display-4 fw-bold text-blue-darkest">150</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-center mb-5 text-dark-heading fw-bold">Quick Actions</h2>
+            @* Changed to Bootstrap row for grid-based layout *
+            @* col-12 makes them stack on extra small screens *
+            @* col-md-6 makes them show two per row from medium screens and up *
+            @* w-100 makes the buttons take full width of their column *@
+            <div class="row g-4 justify-content-center mb-5">
+                <div class="col-12 col-md-6">
+                    <a class="btn btn-primary btn-lg shadow-sm px-5 py-3 rounded-pill hover-lift w-100" asp-controller="Admin" asp-action="Index" role="button">
+                        <i class="fas fa-users me-2"></i> View All Patients
+                    </a>
+                </div>
+                <div class="col-12 col-md-6">
+                    <a class="btn btn-primary btn-lg shadow-sm px-5 py-3 rounded-pill hover-lift w-100" asp-controller="Admin" asp-action="Doctors" role="button">
+                        <i class="fas fa-user-md me-2"></i> Manage Doctors
+                    </a>
+                </div>
+                <div class="col-12 col-md-6">
+                    <a class="btn btn-primary btn-lg shadow-sm px-5 py-3 rounded-pill hover-lift w-100" asp-controller="Admin" asp-action="Appointments" role="button">
+                        <i class="fas fa-calendar-alt me-2"></i> Manage Appointments
+                    </a>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="dropdown w-100">
+                        <button class="btn btn-primary btn-lg dropdown-toggle shadow-sm px-5 py-3 rounded-pill hover-lift w-100" type="button" id="newRegistrationDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-plus me-2"></i> New Registration
+                        </button>
+                        <ul class="dropdown-menu shadow-lg border-0 rounded-3 p-2" aria-labelledby="newRegistrationDropdown">
+                            <li><h6 class="dropdown-header text-primary fw-semibold">Register New User</h6></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item d-flex align-items-center rounded-2 py-2 px-3" asp-controller="Admin" asp-action="RegisterDoctor"><i class="fas fa-user-md me-2 text-info"></i>Register Doctor</a></li>
+                            <li><a class="dropdown-item d-flex align-items-center rounded-2 py-2 px-3" asp-controller="Admin" asp-action="RegisterAdmin"><i class="fas fa-user-shield me-2 text-success"></i>Register Admin</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<style>
+    /* Custom styles to integrate with site.css variables for a cohesive look */
+    /* Ensure body doesn't have conflicting background from _Layout.cshtml if you want this specific full-page background */
+    body {
+        background: none !important; /* Reset body background if _Layout sets one */
+    }
+
+    .dashboard-page-wrapper {
+        min-height: 100vh; /* Ensure it takes full viewport height */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* Background Image with Overlay */
+        background-image: linear-gradient(rgba(var(--blue-deep-rgb), 0.7), rgba(var(--blue-darkest-rgb), 0.7)), url('https://images.unsplash.com/photo-1576091160550-fd422bc777e3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1956&q=80'); /* Professional medical/abstract background */
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed; /* Optional: parallax effect */
+        padding: 40px 0; /* Add some padding top/bottom */
+    }
+
+    .dashboard-content-card {
+        background-color: rgba(255, 255, 255, 0.95) !important; /* Slightly transparent white card to let background show */
+        backdrop-filter: blur(5px); /* Optional: frosted glass effect */
+        -webkit-backdrop-filter: blur(5px); /* For Safari support */
+    }
+
+    .shadow-xl {
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15); /* A slightly stronger shadow for main elements */
+    }
+
+    .shadow-md {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Medium shadow for cards */
+    }
+
+    /* Custom color classes using site.css variables */
+    .bg-blue-lighter {
+        background-color: var(--blue-lighter) !important;
+    }
+
+    .text-blue-deep {
+        color: var(--blue-deep) !important;
+    }
+
+    .text-dark-heading {
+        color: var(--dark-heading) !important;
+    }
+
+    .text-blue-darkest {
+        color: var(--blue-darkest) !important;
+    }
+
+    /* Hover effect for buttons and dropdown items */
+    .hover-lift:hover {
+        transform: translateY(-3px);
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 12px 25px rgba(var(--blue-deep-rgb), 0.35); /* Enhanced shadow on hover */
+    }
+
+    .dropdown-item.rounded-2:hover {
+        background-color: var(--blue-light); /* Lighter blue on dropdown item hover */
+        color: var(--text-dark) !important;
+    }
+
+    /* Override default btn-primary colors to use your palette from site.css */
+    .btn-primary {
+        background-color: var(--login-button-bg);
+        border-color: var(--login-button-bg);
+        color: var(--light-text-on-dark);
+    }
+
+        .btn-primary:hover {
+            background-color: var(--login-button-hover-bg);
+            border-color: var(--login-button-hover-bg);
+        }
+
+    /* Sparkle icon styling - adapted from your doctor register code for creative design */
+    .sparkle-icon {
+        position: absolute;
+        font-size: 3rem;
+        opacity: 0.7;
+        animation: sparkle-glow 1.5s infinite alternate;
+        z-index: 1; /* Ensure sparkles are above background but below content card */
+    }
+
+    .sparkle-top-right {
+        top: 20px;
+        right: 20px;
+        color: var(--blue-light);
+    }
+
+    .sparkle-bottom-left {
+        bottom: 20px;
+        left: 20px;
+        color: var(--blue-light);
+    }
+
+    
+
+    /* Responsive adjustments for smaller screens */
+    
+        .dashboard-content-card
+
+    {
+        margin: 20px 0; /* Adjust margin for smaller screens */
+        padding: 20px;
+    }
+
+    .dashboard-page-wrapper {
+        padding: 20px 0;
+    }
+
+    .display-4 {
+        font-size: 2.5rem; /* Slightly smaller font for display-4 on small screens */
+    }
+
+    .display-5 {
+        font-size: 2rem;
+    }
+
+    .sparkle-icon {
+        font-size: 2rem;
+    }
+
+    }
+</style>

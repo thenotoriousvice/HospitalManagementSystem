@@ -1,0 +1,742 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.your-footer-class { /* Replace with your actual footer's class or ID */
+    padding: 10px 0; /* Example: 10px top/bottom, 0 left/right */
+    /* Or specific paddings */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 50px; /* Example: Reduce this value */
+    /* Or */
+    min-height: 50px; /* Example: Reduce this value */
+    margin-bottom: 5px; /* Reduce default margins */
+    padding: 0;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+/* Removed the generic .your-footer-class and used the specific ID */
+#mainAppFooter {
+    /* Set your desired fixed height and padding */
+    height: 50px;
+    min-height: 50px; /* Use min-height if content varies but you want a minimum */
+    padding: 8px 0;
+    line-height: 24px; /* Adjust line-height to vertically center text if needed */
+    /* Ensure background and text colors are explicitly set */
+    background-color: #f8f9fa; /* Example: light grey background */
+    color: #6c757d; /* Example: muted text color */
+    /* Important: Override any potential margins or positioning from other rules */
+    margin: 0 !important;
+    position: relative; /* Or 'fixed' if it's always at the bottom of the viewport */
+    bottom: 0;
+    width: 100%;
+    box-shadow: none !important; /* Remove any accidental shadows */
+}
+
+    /* If your footer has a container inside it, style that too */
+    #mainAppFooter .container {
+        height: 100%; /* Make sure the container fills the footer's height */
+        display: flex;
+        align-items: center; /* Vertically center content */
+        justify-content: center; /* Horizontally center content */
+        padding: 0 15px; /* Add horizontal padding if needed */
+    }
+
+/* Adjust the body margin-bottom to account for the fixed footer height */
+body {
+    margin-bottom: 40px; /* This should match the 'height' of your footer */
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+    font-size: 14px;
+}
+
+body {
+    margin-bottom: 60px;
+}
+
+.your-footer-class { /* Replace with your actual footer's class or ID */
+    padding: 10px 0; /* Example: 10px top/bottom, 0 left/right */
+    /* Or specific paddings */
+    padding-top: 10px;
+    padding-bottom: 10px;
+    height: 50px; /* Example: Reduce this value */
+    /* Or */
+    min-height: 50px; /* Example: Reduce this value */
+    margin-bottom: 5px; /* Reduce default margins */
+    padding: 0;
+}
+/*-----------------Doctor login------------------*/
+:root {
+    /* New Light Blue Shades Palette */
+    --blue-darkest: #2196F3; /* A strong, vibrant light blue for headings/primary elements */
+    --blue-deep: #42A5F5; /* Slightly lighter, good for primary buttons */
+    --blue-medium: #64B5F6; /* A standard, soft light blue */
+    --blue-light: #90CAF9; /* Very pale light blue for hover/subtle backgrounds */
+    --blue-lighter: #E3F2FD; /* Extremely pale blue, almost white, for main backgrounds */
+
+    --primary-green: #28a745; /* Retained for specific functional colors */
+    --warning-orange: #fd7e14; /* Retained for specific functional colors */
+    --light-blue-bg: var(--blue-lighter); /* Body background uses the palest blue */
+    --dark-heading: var(--blue-darkest); /* Headings now use the darkest light blue */
+    --text-color: #34495e; /* General body text color for readability (kept dark) */
+    --light-text-on-dark: #ecf0f1;
+    --border-light: #e0e0e0;
+    /* Adjusted Shadow Opacities for 15% reduction (values remain consistent) */
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.10);
+    --shadow-strong: rgba(0, 0, 0, 0.18);
+    --blue-deep-rgb: 66, 165, 245; /* RGB for --blue-deep */
+    --blue-medium-rgb: 90, 202, 249; /* RGB for --blue-medium */
+    /* Dark Theme for Role Cards Section (from image_69971b.png) */
+    --role-card-section-bg: #4A2A82; /* Dark purple/indigo background */
+    --role-card-bg: #5F3F9D; /* Lighter purple for cards */
+    --role-card-heading-color: #ffffff; /* White for card titles and section heading */
+    --role-card-text-color: #e0e0e0; /* Light gray for card text */
+    --role-card-button-bg: #7A52BB; /* Slightly brighter purple for buttons */
+    --role-card-button-hover-bg: #6B4BA3; /* Darker on hover */
+    --role-card-button-text: #ffffff; /* White text for buttons */
+    --role-card-icon-bg: #7A52BB; /* Icon background */
+    --role-card-icon-color: #ffffff; /* Icon color */
+    --role-card-shadow-rgb: 74, 42, 130; /* For shadows */
+    --carousel-control-color: #ffffff; /* White for carousel arrows */
+    /* Login Page Specific Variables (New) */
+    --login-bg: #E3F2FD; /* Lighter blue for the overall background */
+    --login-card-bg: #FFFFFF; /* White background for the login card */
+    --login-button-bg: #42A5F5; /* Blue for the login button */
+    --login-button-hover-bg: #2196F3; /* Darker blue on hover */
+    --login-text-color: #34495e; /* Dark text for general info */
+    --login-heading-color: #2196F3; /* Dark blue for headings */
+    --input-border-color: #bbdefb; /* Light blue border for inputs */
+    --input-focus-border-color: #64B5F6; /* Medium blue on input focus */
+    --link-color: #42A5F5; /* Blue for links */
+    --image-section-bg: #b3e5fc; /* Lighter blue for the image background */
+    --stats-box-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent white for stats boxes */
+}
+
+/* Ensure body stretches to full viewport height for centering */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--login-bg); /* Apply to body */
+}
+
+/* The main container for the login page, filling available space */
+.login-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 3px; /* Adjust based on actual header/footer height */
+    padding: 4px; /* Add some padding for smaller screens */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+.login-content-container {
+    display: flex;
+    background-color: var(--login-card-bg); /* Overall white background for the content block */
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Important to contain rounded corners for image */
+    max-width: 900px; /* Max width for the entire two-column layout */
+    width: 90%;
+    margin: auto; /* Center the container */
+}
+
+.login-image-section {
+    background-color: var(--image-section-bg);
+    border-radius: 20px; /* Match parent container */
+    position: relative; /* Keep relative for absolute children if any */
+    display: flex;
+    flex-direction: column; /* Arranges children (text, stars, image) in a column */
+    justify-content: flex-start; /* Aligns content to the top */
+    align-items: center; /* Center items horizontally within this column */
+    padding: 25px 5px; /* Adjust padding as needed for overall spacing */
+    overflow: hidden;
+    flex: 1; /* Take up available space */
+}
+
+    /* NEW CSS for your <img> tag */
+    .login-image-section .lady-doctor-img {
+        width: 90%; /* Adjusted: Further reduced width */
+        height: 75%; /* Maintain aspect ratio */
+        display: block; /* Ensures it behaves like a block element for margin auto */
+        margin-top: auto; /* Pushes the image to the bottom of the flex container */
+        max-width: 350px; /* Adjusted: Further reduced max-width */
+        border-radius: 10px; /* Optional: Add some rounded corners to the image */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Optional: Add a subtle shadow */
+        z-index: 2; /* Ensure it's above any background elements if you reintroduce them */
+    }
+
+    .login-image-section .decorative-text {
+        position: static; /* Make it part of the normal flow */
+        margin-bottom: 20px; /* Add space below text */
+        text-align: center; /* Center the text */
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: var(--login-text-color);
+        line-height: 1.2;
+        z-index: 2;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+    }
+
+/* Adjusting stats boxes if needed, they are still absolute */
+.login-stats-box {
+    position: absolute; /* Keep absolute to position over the image */
+    background-color: var(--stats-box-bg);
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--login-heading-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 3;
+}
+
+    .login-stats-box.doses {
+        bottom: 120px; /* Adjust as needed relative to the bottom of .login-image-section */
+        left: 40px;
+    }
+
+    .login-stats-box.recovery {
+        bottom: 60px; /* Adjust as needed relative to the bottom of .login-image-section */
+        right: 40px;
+    }
+
+
+.login-form-section {
+    padding: 40px;
+    padding-bottom: 5px;
+    margin-bottom: 40px;
+    flex: 1; /* Take up available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center form elements vertically */
+}
+
+    .login-form-section h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--login-heading-color);
+        margin-bottom: 20px;
+        text-align: left; /* Align to left */
+    }
+
+    .login-form-section hr {
+        border-top: 1px solid var(--input-border-color); /* Style the hr */
+        margin-bottom: 30px;
+        margin-top: 0;
+        width: 80px; /* A shorter, more stylish hr */
+        text-align: left;
+        margin-left: 0;
+    }
+
+.form-group label {
+    font-weight: 500;
+    color: var(--login-text-color);
+    margin-bottom: 8px;
+}
+
+/* Styling for original input fields */
+.form-control {
+    border-radius: 12px; /* More rounded input fields */
+    padding: 12px 18px;
+    border: 1px solid var(--input-border-color);
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: var(--input-focus-border-color);
+        box-shadow: 0 0 0 0.25rem rgba(var(--blue-deep-rgb), 0.25);
+    }
+
+.form-check-input {
+    border-radius: 5px; /* Slightly rounded checkbox */
+    border: 1px solid var(--input-border-color);
+}
+
+    .form-check-input:checked {
+        background-color: var(--login-button-bg);
+        border-color: var(--login-button-bg);
+    }
+
+.btn-primary {
+    background-color: var(--login-button-bg);
+    border-color: var(--login-button-bg);
+    padding: 12px 25px;
+    border-radius: 15px; /* Rounded button */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%; /* Full width button */
+    margin-top: 20px;
+}
+
+    .btn-primary:hover {
+        background-color: var(--login-button-hover-bg);
+        border-color: var(--login-button-hover-bg);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(var(--blue-deep-rgb), 0.3);
+    }
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    a:hover {
+        color: var(--login-button-hover-bg);
+        text-decoration: underline;
+    }
+
+.text-danger {
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) { /* Medium devices (tablets) */
+    .login-image-section {
+        display: none; /* Hide image section on smaller screens */
+    }
+
+    .login-content-container {
+        max-width: 500px; /* Only form width */
+    }
+}
+
+@media (max-width: 767.98px) { /* Small devices (phones) */
+    .login-form-section {
+        padding: 25px;
+    }
+
+        .login-form-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .login-form-section hr {
+            margin-bottom: 20px;
+        }
+
+    .form-control {
+        padding: 10px 15px;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+    }
+}
+/*---------------doctor register-----------------*/
+/* Define your color palette and common variables */
+
+
+    /*----------------------unknown---------------------*/
+    /**/ /*body {
+    font-family: 'Inter', sans-serif;
+    background-color: #E6F0FF;*/ /*Light blue background */
+    /*color: #333;
+}
+
+h1 {
+    color: #0047AB;*/ /*Dark blue for headings */
+    /*font-weight: 700;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.card {
+    border-radius: 18px;
+    box-shadow: 0 6px 12px rgba(0,0,0,.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #D1E5FF;*/ /*Light blue border */
+    /*}
+
+.card-header {
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    background: linear-gradient(90deg, #D1E5FF, #A8D8FF);*/ /*Gradient blue header */
+    /*color: #0047AB;*/ /* Dark blue text for header */
+    /*font-weight: bold;
+    border-bottom: none;
+    padding: 1.2rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, #66A3FF, #3385FF);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(102,163,255,0.2);
+    color: white;
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(45deg, #3385FF, #005CE6);
+        box-shadow: 0 6px 12px rgba(102,163,255,0.3);
+        transform: translateY(-2px);
+    }
+
+.btn-secondary {
+    background: linear-gradient(45deg, #A8D8FF, #D1E5FF);
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(168,216,255,0.2);
+    color: #0047AB;  Dark blue text 
+}
+
+    .btn-secondary:hover {
+        background: linear-gradient(45deg, #D1E5FF, #E6F0FF);
+        box-shadow: 0 6px 12px rgba(168,216,255,0.3);
+        transform: translateY(-2px);
+    }
+
+.alert-info {
+    border-radius: 12px;
+    background-color: #D1E5FF;
+    border-color: #A8D8FF;
+    color: #0047AB;
+    box-shadow: 0 4px 8px rgba(168,216,255,0.1);
+    margin-bottom: 20px;  Added margin-bottom 
+}
+
+    .alert-info .alert-link {
+        color: #0047AB;*/ /* Match alert text color*/
+    /*font-weight: bold;
+}
+
+.table-dark th {
+    background-color: #0047AB;*/ /*Dark blue for table header */
+    /*color: white;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 71, 171, 0.05);*/ /*Light stripe for odd rows */
+    /*}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 71, 171, 0.1);*/ /*Slightly darker hover */
+    /*}
+
+.btn-success {
+    background-color: #28a745;*/ /* Bootstrap success green */
+    /*border-color: #28a745;
+}
+
+.btn-danger {
+    background-color: #dc3545;*/ /*Bootstrap danger red */
+    /*border-color: #dc3545;
+}
+
+.btn-warning {
+    background-color: #ffc107;*/ /*Bootstrap warning yellow */
+    /*border-color: #ffc107;
+    color: #212529;*/ /*Dark text for warning button */
+    /*}
+*/
+
+    : root {
+    /* New Light Blue Shades Palette */
+    --blue-darkest: #2196F3; /* A strong, vibrant light blue for headings/primary elements */
+    --blue-deep: #42A5F5; /* Slightly lighter, good for primary buttons */
+    --blue-medium: #64B5F6; /* A standard, soft light blue */
+    --blue-light: #90CAF9; /* Very pale light blue for hover/subtle backgrounds */
+    --blue-lighter: #E3F2FD; /* Extremely pale blue, almost white, for main backgrounds */
+
+    --primary-green: #28a745; /* Retained for specific functional colors */
+    --warning-orange: #fd7e14; /* Retained for specific functional colors */
+    --light-blue-bg: var(--blue-lighter); /* Body background uses the palest blue */
+    --dark-heading: var(--blue-darkest); /* Headings now use the darkest light blue */
+    --text-color: #34495e; /* General body text color for readability (kept dark) */
+    --light-text-on-dark: #ecf0f1;
+    --border-light: #e0e0e0;
+    /* Adjusted Shadow Opacities for 15% reduction (values remain consistent) */
+    --shadow-light: rgba(0, 0, 0, 0.05);
+    --shadow-medium: rgba(0, 0, 0, 0.10);
+    --shadow-strong: rgba(0, 0, 0, 0.18);
+    --blue-deep-rgb: 66, 165, 245; /* RGB for --blue-deep */
+    --blue-medium-rgb: 90, 202, 249; /* RGB for --blue-medium */
+    /* Dark Theme for Role Cards Section (from image_69971b.png) */
+    --role-card-section-bg: #4A2A82; /* Dark purple/indigo background */
+    --role-card-bg: #5F3F9D; /* Lighter purple for cards */
+    --role-card-heading-color: #ffffff; /* White for card titles and section heading */
+    --role-card-text-color: #e0e0e0; /* Light gray for card text */
+    --role-card-button-bg: #7A52BB; /* Slightly brighter purple for buttons */
+    --role-card-button-hover-bg: #6B4BA3; /* Darker on hover */
+    --role-card-button-text: #ffffff; /* White text for buttons */
+    --role-card-icon-bg: #7A52BB; /* Icon background */
+    --role-card-icon-color: #ffffff; /* Icon color */
+    --role-card-shadow-rgb: 74, 42, 130; /* For shadows */
+    --carousel-control-color: #ffffff; /* White for carousel arrows */
+    /* Login Page Specific Variables (New) */
+    --login-bg: #E3F2FD; /* Lighter blue for the overall background */
+    --login-card-bg: #FFFFFF; /* White background for the login card */
+    --login-button-bg: #42A5F5; /* Blue for the login button */
+    --login-button-hover-bg: #2196F3; /* Darker blue on hover */
+    --login-text-color: #34495e; /* Dark text for general info */
+    --login-heading-color: #2196F3; /* Dark blue for headings */
+    --input-border-color: #bbdefb; /* Light blue border for inputs */
+    --input-focus-border-color: #64B5F6; /* Medium blue on input focus */
+    --link-color: #42A5F5; /* Blue for links */
+    --image-section-bg: #b3e5fc; /* Lighter blue for the image background */
+    --stats-box-bg: rgba(255, 255, 255, 0.85); /* Slightly transparent white for stats boxes */
+}
+
+/* Ensure body stretches to full viewport height for centering */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: var(--login-bg); /* Apply to body */
+}
+
+/* The main container for the login page, filling available space */
+.login-page-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%; /* Use 100% to ensure it fills the viewport height */
+    padding: 20px; /* Add some padding for smaller screens and overall spacing */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+.login-content-container {
+    display: flex;
+    background-color: var(--login-card-bg); /* Overall white background for the content block */
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Important to contain rounded corners for image */
+    max-width: 900px; /* Max width for the entire two-column layout */
+    width: 100%; /* Adjust to 100% to fill its parent col-like behavior */
+}
+
+.login-image-section {
+    background-color: var(--image-section-bg);
+    position: relative; /* Keep relative for absolute children if any */
+    display: flex;
+    flex-direction: column; /* Arranges children (text, stars, image) in a column */
+    justify-content: flex-start; /* Aligns content to the top */
+    align-items: center; /* Center items horizontally within this column */
+    padding: 25px; /* Adjusted padding as needed for overall spacing */
+    overflow: hidden;
+    flex: 1; /* Take up available space */
+}
+
+    /* NEW CSS for your <img> tag */
+    .login-image-section .lady-doctor-img {
+        width: 90%; /* Adjusted: Further reduced width */
+        height: auto; /* Changed to auto to maintain aspect ratio */
+        display: block; /* Ensures it behaves like a block element for margin auto */
+        margin-top: auto; /* Pushes the image to the bottom of the flex container */
+        max-width: 350px; /* Adjusted: Further reduced max-width */
+        border-radius: 10px; /* Optional: Add some rounded corners to the image */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Optional: Add a subtle shadow */
+        z-index: 2; /* Ensure it's above any background elements if you reintroduce them */
+    }
+
+    .login-image-section .decorative-text {
+        position: static; /* Make it part of the normal flow */
+        margin-bottom: 20px; /* Add space below text */
+        text-align: center; /* Center the text */
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: var(--login-text-color);
+        line-height: 1.2;
+        z-index: 2;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+    }
+
+/* Adjusting stats boxes if needed, they are still absolute */
+.login-stats-box {
+    position: absolute; /* Keep absolute to position over the image */
+    background-color: var(--stats-box-bg);
+    border-radius: 10px;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--login-heading-color);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 3;
+}
+
+    .login-stats-box.doses {
+        bottom: 120px; /* Adjust as needed relative to the bottom of .login-image-section */
+        left: 40px;
+    }
+
+    .login-stats-box.recovery {
+        bottom: 60px; /* Adjust as needed relative to the bottom of .login-image-section */
+        right: 40px;
+    }
+
+.login-form-section {
+    padding: 40px;
+    padding-bottom: 5px; /* Reduced to balance vertical space */
+    margin-bottom: 40px; /* Pushes content up from the bottom */
+    flex: 1; /* Take up available space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center form elements vertically */
+}
+
+    .login-form-section h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--login-heading-color);
+        margin-bottom: 20px;
+        text-align: left; /* Align to left */
+    }
+
+    .login-form-section hr {
+        border-top: 1px solid var(--input-border-color); /* Style the hr */
+        margin-bottom: 30px;
+        margin-top: 0;
+        width: 80px; /* A shorter, more stylish hr */
+        text-align: left;
+        margin-left: 0;
+    }
+
+.form-group label {
+    font-weight: 500;
+    color: var(--login-text-color);
+    margin-bottom: 8px;
+}
+
+/* Styling for original input fields */
+.form-control {
+    border-radius: 12px; /* More rounded input fields */
+    padding: 12px 18px;
+    border: 1px solid var(--input-border-color);
+    transition: all 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: var(--input-focus-border-color);
+        box-shadow: 0 0 0 0.25rem rgba(var(--blue-deep-rgb), 0.25);
+    }
+
+.form-check-input {
+    border-radius: 5px; /* Slightly rounded checkbox */
+    border: 1px solid var(--input-border-color);
+}
+
+    .form-check-input:checked {
+        background-color: var(--login-button-bg);
+        border-color: var(--login-button-bg);
+    }
+
+/* Styling for the primary button (Login button) */
+.btn-primary {
+    background-color: var(--login-button-bg);
+    border-color: var(--login-button-bg);
+    padding: 12px 25px;
+    border-radius: 15px; /* Rounded button */
+    font-weight: 600;
+    transition: all 0.3s ease;
+    width: 100%; /* Full width button */
+    margin-top: 20px;
+}
+
+    .btn-primary:hover {
+        background-color: var(--login-button-hover-bg);
+        border-color: var(--login-button-hover-bg);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(var(--blue-deep-rgb), 0.3);
+    }
+
+a {
+    color: var(--link-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+    a:hover {
+        color: var(--login-button-hover-bg);
+        text-decoration: underline;
+    }
+
+.text-danger {
+    font-size: 0.875rem;
+    margin-top: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) { /* Medium devices (tablets) */
+    .login-image-section {
+        display: none; /* Hide image section on smaller screens */
+    }
+
+    .login-content-container {
+        max-width: 500px; /* Only form width */
+    }
+
+    .login-form-section {
+        flex: none; /* Remove flex 1 to allow content to shrink */
+        width: 100%; /* Ensure form takes full width when image is hidden */
+    }
+}
+
+@media (max-width: 767.98px) { /* Small devices (phones) */
+    .login-form-section {
+        padding: 25px;
+    }
+
+        .login-form-section h1 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .login-form-section hr {
+            margin-bottom: 20px;
+        }
+
+    .form-control {
+        padding: 10px 15px;
+    }
+
+    .btn-primary {
+        padding: 10px 20px;
+    }
+}
+/*--------------admin dashboard--------------*/

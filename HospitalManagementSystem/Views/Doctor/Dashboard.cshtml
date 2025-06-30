@@ -1,0 +1,179 @@
+﻿@using HospitalManagementSystem.Repository.Models
+@model HospitalManagementSystem.Repository.Models.DoctorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Doctor Dashboard";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #E6F0FF; /* Light blue background */
+            color: #333;
+        }
+
+        h1 {
+            color: #0047AB; /* Dark blue for headings */
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .card {
+            border-radius: 18px;
+            box-shadow: 0 6px 12px rgba(0,0,0,.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #D1E5FF; /* Light blue border */
+        }
+
+        .card-header {
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
+            background: linear-gradient(90deg, #D1E5FF, #A8D8FF); /* Gradient blue header */
+            color: #0047AB; /* Dark blue text for header */
+            font-weight: bold;
+            border-bottom: none;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #66A3FF, #3385FF);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(102,163,255,0.2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #3385FF, #005CE6);
+            box-shadow: 0 6px 12px rgba(102,163,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(45deg, #A8D8FF, #D1E5FF);
+            border: none;
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(168,216,255,0.2);
+            color: #0047AB; /* Dark blue text */
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(45deg, #D1E5FF, #E6F0FF);
+            box-shadow: 0 6px 12px rgba(168,216,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .alert-info {
+            border-radius: 12px;
+            background-color: #D1E5FF;
+            border-color: #A8D8FF;
+            color: #0047AB;
+            box-shadow: 0 4px 8px rgba(168,216,255,0.1);
+            margin-bottom: 20px; /* Added margin-bottom */
+        }
+
+        .alert-info .alert-link {
+            color: #0047AB; /* Match alert text color */
+            font-weight: bold;
+        }
+
+        .table-dark th {
+            background-color: #0047AB; /* Dark blue for table header */
+            color: white;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 71, 171, 0.05); /* Light stripe for odd rows */
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 71, 171, 0.1); /* Slightly darker hover */
+        }
+
+        .btn-success {
+            background-color: #28a745; /* Bootstrap success green */
+            border-color: #28a745;
+        }
+        .btn-danger {
+            background-color: #dc3545; /* Bootstrap danger red */
+            border-color: #dc3545;
+        }
+        .btn-warning {
+            background-color: #ffc107; /* Bootstrap warning yellow */
+            border-color: #ffc107;
+            color: #212529; /* Dark text for warning button */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container py-4">
+        @* The InfoMessage alert is no longer displayed on this page as per user request. * @
+        @* It is assumed that the responsibility of prompting doctors to complete their profile
+           will be handled elsewhere or is no longer desired as a prominent alert on the dashboard. *@
+
+        @if (Model != null && Model.DoctorProfile != null)
+        {
+            <h1>Welcome, @Model.DoctorProfile.FullName!</h1>
+        }
+        else
+        {
+             <h1>Welcome to your Dashboard!</h1>
+        }
+
+        <div class="card mb-4">
+            <div class="card-header">
+                Your Profile Details
+            </div>
+            <div class="card-body">
+                @if (Model.DoctorProfile != null)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Email:</strong> @Model.DoctorProfile.IdentityUser?.Email</p>
+                            <p><strong>Phone Number:</strong> @Model.DoctorProfile.PhoneNumber</p>
+                            <p><strong>Department:</strong> @Model.DoctorProfile.Department?.Name</p>
+                            <p><strong>Qualification:</strong> @Model.DoctorProfile.Qualification</p>
+                            <p><strong>Experience:</strong> @Model.DoctorProfile.ExperienceYears years</p>
+                            <p><strong>Working Hours:</strong> @(Model.DoctorProfile.WorkingHoursStart.HasValue ? (DateTime.Today + Model.DoctorProfile.WorkingHoursStart.Value).ToString("hh:mm tt") : "Not Set") - @(Model.DoctorProfile.WorkingHoursEnd.HasValue ? (DateTime.Today + Model.DoctorProfile.WorkingHoursEnd.Value).ToString("hh:mm tt") : "Not Set")</p>
+
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3 mt-3">
+                        <a asp-action="EditProfile" class="btn btn-primary ">Edit Your Profile</a>
+                        <a asp-action="MyAppointments" class="btn btn-secondary">My Appointments</a>
+                    </div>
+                  
+                    @* <div class="d-flex flex-wrap gap-2 mt-3">
+                        <a asp-action="EditProfile" class="btn btn-primary flex-fill">Edit Your Profile</a>
+                        <a asp-action="MyAppointments" class="btn btn-secondary flex-fill">My Appointments</a>
+                    </div> *@
+                }
+                else
+                {
+                    <p class="text-muted">No profile details available. Please create or complete your profile.</p>
+                    <a asp-action="EditProfile" class="btn btn-primary">Create Your Profile</a>
+                }
+            </div>
+        </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>

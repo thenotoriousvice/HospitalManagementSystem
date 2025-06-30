@@ -1,0 +1,304 @@
+﻿@model IEnumerable<HospitalManagementSystem.Repository.Models.Bill>
+
+@{
+    ViewData["Title"] = "All Bills";
+}
+
+<div class="container mt-4 mb-4">
+    <div class="card shadow-md border-0 rounded-3">
+        <div class="card-header bg-gradient-primary text-white py-3 rounded-top">
+            <h2 class="card-title m-0 fw-bold"><i class="bi bi-list-ul me-2"></i> All Bills</h2>
+        </div>
+        <div class="card-body p-4">
+            <p>
+                <a asp-action="Index" class="btn btn-outline-primary rounded-pill shadow"><i class="bi bi-plus-circle-fill me-2"></i> Create New Bill</a>
+            </p>
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Bill ID</th>
+                            <th>Patient ID</th>
+                            <th>Total Amount</th>
+                            <th>Bill Date</th>
+                            <th>Status</th> @* Changed from PaymentStatus *@
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.BillId</td>
+                                <td>@item.PatientId</td>
+                                <td>₹ @item.TotalAmount.ToString("N2")</td>
+                                <td>@item.BillDate.ToString("dd-MMM-yyyy hh:mm tt")</td>
+                                <td>
+                                    <span class="badge @(item.Status == HospitalManagementSystem.Repository.Models.BillStatus.PAID ? "bg-success" : (item.Status == HospitalManagementSystem.Repository.Models.BillStatus.PENDING_INSURANCE ? "bg-info" : "bg-warning text-dark"))">
+                                        @item.Status.ToString().Replace("_", " ")
+                                    </span>
+                                </td>
+                                <td>
+                                    <a asp-action="Index" asp-route-billId="@item.BillId" class="btn btn-sm btn-primary me-2" title="Edit"><i class="bi bi-pencil-fill"></i></a>
+                                    @if (item.Status == HospitalManagementSystem.Repository.Models.BillStatus.PENDING_PAYMENT)
+                                    {
+                                        <a asp-action="Payment" asp-route-billId="@item.BillId" class="btn btn-sm btn-success me-2" title="Process Payment"><i class="bi bi-credit-card-fill"></i> Pay</a>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-info me-2" data-bs-toggle="modal" data-bs-target="#billDetailsModal" onclick="loadBillDetails(@item.BillId)" title="View Bill"><i class="bi bi-file-earmark-text-fill"></i> View</button>
+                                    }
+                                    <a asp-action="Delete" asp-route-billId="@item.BillId" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this bill?')" title="Delete"><i class="bi bi-trash-fill"></i></a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="billDetailsModal" tabindex="-1" aria-labelledby="billDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="billDetailsModalLabel"><i class="bi bi-receipt me-2"></i> Bill Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="billDetailsContent">
+                    Loading bill details...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="printBillDetails()">Print Bill</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Function to load bill details into the modal (Copied from Payment.cshtml)
+        async function loadBillDetails(billId) {
+            const billDetailsContent = document.getElementById('billDetailsContent');
+            billDetailsContent.innerHTML = 'Loading bill details...'; // Show loading message
+
+            try {
+                const response = await fetch(`/Billing/GetBillDetails?billId=${billId}`);
+                if (response.ok) {
+                    const bill = await response.json();
+                    let uploadedDocHtml = '';
+                    if (bill.uploadedFilePath) {
+                        uploadedDocHtml = `<dt class="col-sm-4">Uploaded Document:</dt><dd class="col-sm-8"><a href="${bill.uploadedFilePath}" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi bi-file-earmark-arrow-down me-1"></i> View Document</a></dd>`;
+                    }
+
+                    billDetailsContent.innerHTML = `
+                        <dl class="row">
+                            <dt class="col-sm-4">Bill ID:</dt>
+                            <dd class="col-sm-8 fw-bold">${bill.billId}</dd>
+
+                            <dt class="col-sm-4">Patient ID:</dt>
+                            <dd class="col-sm-8 fw-bold">${bill.patientId}</dd>
+
+                            <dt class="col-sm-4">Total Amount:</dt>
+                            <dd class="col-sm-8 fw-bold">₹ ${parseFloat(bill.totalAmount).toFixed(2)}</dd>
+
+                            <dt class="col-sm-4">Bill Date & Time:</dt>
+                            <dd class="col-sm-8 fw-bold">${new Date(bill.billDate).toLocaleString('en-IN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true })}</dd>
+
+                            <dt class="col-sm-4">Status:</dt>
+                            <dd class="col-sm-8 fw-bold">${bill.status}</dd>
+                            ${uploadedDocHtml}
+                        </dl>
+                    `;
+                } else {
+                    billDetailsContent.innerHTML = '<div class="alert alert-danger">Failed to load bill details.</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching bill details:', error);
+                billDetailsContent.innerHTML = '<div class="alert alert-danger">An error occurred while fetching bill details.</div>';
+            }
+        }
+
+        function printBillDetails() {
+            window.print();
+        }
+    </script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css">
+    <style>
+        /* Base Colors from provided palette: #DDEBFF, #BBD8FF, #99C4FF, #66A3FF, #0066FF */
+
+        /* Top Navbar and Card Headers */
+        .bg-gradient-primary {
+            background: linear-gradient(to right, #0066FF,#66A3FF, #7A9FE6) !important; /* Darkest to Fourth blue */
+        }
+
+        .bg-primary { /* For card headers like in Index/Payment views if using directly */
+            background-color: #2979FF !important; /* Darkest blue */
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background-color: #0066FF; /* Darkest blue from palette */
+            border-color: #0066FF;
+            color: #fff;
+        }
+
+            .btn-primary:hover {
+                background-color: #0052CC; /* Slightly darker */
+                border-color: #0052CC;
+            }
+
+        .btn-success {
+            background-color: #198754; /* Standard Bootstrap Green for success */
+            border-color: #198754;
+            color: #fff;
+        }
+
+            .btn-success:hover {
+                background-color: #157347; /* Slightly darker green */
+                border-color: #157347;
+            }
+
+        .btn-info {
+            background-color: #0066FF; /* Middle blue from palette */
+            border-color: #99C4FF;
+            color: #fff;
+        }
+
+            .btn-info:hover {
+                background-color: #7A9FE6; /* Slightly darker */
+                border-color: #7A9FE6;
+            }
+
+        .btn-danger {
+            background-color: #dc3545; /* Standard Bootstrap Red for danger */
+            border-color: #dc3545;
+            color: #fff;
+        }
+
+            .btn-danger:hover {
+                background-color: #bb2d3b; /* Slightly darker red */
+                border-color: #bb2d3b;
+            }
+
+        .btn-secondary {
+            background-color: #DDEBFF; /* Lightest blue from palette */
+            border-color: #DDEBFF;
+            color: #212529; /* Dark text for contrast */
+        }
+
+            .btn-secondary:hover {
+                background-color: #BBD8FF; /* Second Light Blue from palette */
+                border-color: #BBD8FF;
+                color: #212529;
+            }
+
+        /* Outline Buttons */
+        .btn-outline-primary {
+            color: #0066FF;
+            border-color: #0066FF;
+        }
+
+            .btn-outline-primary:hover {
+                background-color: #0066FF;
+                color: #fff;
+            }
+
+        .btn-outline-success {
+            color: #198754; /* Standard Bootstrap Green */
+            border-color: #198754;
+        }
+
+            .btn-outline-success:hover {
+                background-color: #198754;
+                color: #fff;
+            }
+
+        .btn-outline-info {
+            color: #99C4FF; /* Middle blue from palette */
+            border-color: #99C4FF;
+        }
+
+            .btn-outline-info:hover {
+                background-color: #99C4FF;
+                color: #fff;
+            }
+
+        .btn-outline-secondary {
+            color: #DDEBFF; /* Lightest blue from palette */
+            border-color: #DDEBFF;
+        }
+
+            .btn-outline-secondary:hover {
+                background-color: #DDEBFF;
+                color: #212529;
+            }
+
+        /* Badges */
+        .badge.bg-success {
+            background-color: #198754 !important; /* Standard Bootstrap Green for PAID status */
+            color: #fff !important;
+        }
+
+        .badge.bg-info {
+            background-color: #99C4FF !important; /* Middle blue from palette - PENDING_INSURANCE */
+            color: #fff !important;
+        }
+
+        .badge.bg-warning {
+            background-color: #ffc107 !important; /* Standard Bootstrap Yellow/Orange for PENDING_PAYMENT status */
+            color: #212529 !important; /* Dark text for contrast */
+        }
+
+        /* Alert styling - specific to success alert, maintaining a green look as seen in screenshot */
+        .alert-success {
+            background-color: #d4edda; /* Light green */
+            color: #155724; /* Dark green text */
+            border-color: #c3e6cb; /* Green border */
+        }
+
+        /* Modal Close Button (ensure visibility on dark backgrounds) */
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        /* Custom styles for the bill details print */
+        @@media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #billDetailsModal, #billDetailsModal * {
+                visibility: visible;
+            }
+
+            #billDetailsModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                overflow: hidden; /* Prevent scrollbars */
+            }
+
+            .modal-footer {
+                display: none; /* Hide footer buttons when printing */
+            }
+
+            .modal-header .btn-close {
+                display: none; /* Hide close button when printing */
+            }
+        }
+    </style>
+}

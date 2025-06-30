@@ -1,0 +1,736 @@
+﻿@{
+    ViewData["Title"] = "Welcome to Hospital Management System";
+}
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>@Html.Raw(@"
+        :root {
+            --primary-blue: #007bff;
+            --secondary-blue: #6610f2; /* A deeper, slightly purplish blue */
+            --light-blue: #e0f7fa; /* Very light, airy blue */
+            --dark-blue-text: #1a237e;
+            --success-green: #28a745;
+            --info-cyan: #17a2b8;
+            --warning-orange: #fd7e14; /* A more vibrant orange */
+            --light-bg: #f0f7f9; /* Soft, slightly textured background */
+            --card-bg: #ffffff;
+            --text-muted-dark: #495057;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--light-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-muted-dark);
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+        }
+
+        /* --- Navbar --- */
+        .navbar-custom {
+            background-color: var(--card-bg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--dark-blue-text) !important;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand img {
+            height: 45px;
+            margin-right: 12px;
+            filter: drop-shadow(2px 2px 5px rgba(0,0,0,0.1));
+        }
+
+        .navbar-brand small {
+            font-size: 0.9rem;
+            color: var(--text-muted-dark);
+            font-weight: 400;
+            margin-left: 5px;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text-muted-dark);
+            font-weight: 500;
+            margin: 0 15px;
+            transition: all 0.3s ease-in-out;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-blue);
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease-in-out;
+            border-radius: 5px;
+        }
+
+        .navbar-nav .nav-link:hover::after,
+        .navbar-nav .nav-link.active::after {
+            width: 100%;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+
+        .btn-login, .btn-signup {
+            border-radius: 50px;
+            padding: 10px 28px;
+            font-weight: 600;
+            margin-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-blue);
+            color: var(--card-bg);
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.25);
+        }
+
+        .btn-signup {
+            background-color: var(--primary-blue);
+            color: var(--card-bg);
+            border: none;
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.2);
+        }
+
+        .btn-signup:hover {
+            background-color: #0056b3;
+            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.35);
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            background: linear-gradient(135deg, #e0f2f7 0%, #c1e7f3 100%); /* Softer, wider gradient */
+            padding: 100px 0;
+            text-align: left; /* Align text to left */
+            border-radius: 25px; /* More rounded */
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .hero-section::before,
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            z-index: 0;
+            animation: floatEffect 6s ease-in-out infinite alternate;
+        }
+
+        .hero-section::before {
+            width: 200px;
+            height: 200px;
+            top: -50px;
+            left: -50px;
+            animation-delay: 0s;
+        }
+
+        .hero-section::after {
+            width: 150px;
+            height: 150px;
+            bottom: -30px;
+            right: -30px;
+            animation-delay: 1.5s;
+        }
+
+        .hero-text {
+            position: relative;
+            z-index: 1; /* Ensure text is above pseudo-elements */
+            padding-left: 30px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.8rem; /* Slightly larger */
+            font-weight: 900; /* Bolder */
+            color: var(--dark-blue-text);
+            margin-bottom: 25px;
+            line-height: 1.2;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.05);
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .hero-text p {
+            font-size: 1.35rem; /* Larger lead text */
+            color: var(--text-muted-dark);
+            max-width: 600px; /* Adjust max-width */
+            margin-bottom: 40px;
+            animation: slideInLeft 1.2s ease-out 0.2s backwards;
+        }
+
+        .hero-buttons .btn {
+            border-radius: 50px;
+            padding: 14px 35px; /* Larger buttons */
+            font-size: 1.15rem;
+            font-weight: 700; /* Bolder text */
+            margin-right: 20px; /* More spacing */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary-hero {
+            background-color: var(--primary-blue);
+            color: var(--card-bg);
+            border: none;
+        }
+
+        .btn-primary-hero:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 123, 255, 0.4);
+        }
+
+        .btn-outline-secondary-hero {
+            background-color: transparent;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-outline-secondary-hero:hover {
+            background-color: var(--primary-blue);
+            color: var(--card-bg);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(0, 123, 255, 0.2);
+        }
+
+        .hero-image {
+            position: absolute;
+            right: -80px; /* Adjusted to be more visible */
+            bottom: -50px; /* Adjusted */
+            width: 650px; /* Slightly larger */
+            opacity: 0.9;
+            filter: drop-shadow(8px 8px 20px rgba(0,0,0,0.2));
+            animation: scaleIn 1.5s ease-out 0.5s backwards, floatEffect 6s ease-in-out infinite alternate-reverse;
+            z-index: 0;
+        }
+
+        /* --- Main Page Content (Role Cards) --- */
+        .container.mt-5 {
+            margin-top: 80px !important; /* More space from hero */
+            margin-bottom: 80px !important; /* Space above footer */
+        }
+
+        .text-center.mb-5 {
+            margin-bottom: 4rem !important; /* More space */
+        }
+
+        .display-4.fw-bold {
+            font-size: 3.2rem; /* Larger */
+            font-weight: 900 !important;
+            color: var(--dark-blue-text) !important;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.08);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .lead.text-muted {
+            font-size: 1.2rem; /* Larger lead text */
+            color: var(--text-muted-dark) !important;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeInDown 1.2s ease-out 0.2s backwards;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: none; /* Removed default border */
+            border-radius: 15px; /* Slightly less rounded for smaller size */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); /* Slightly less intense shadow */
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s ease-in-out;
+            color: var(--text-muted-dark);
+            padding: 1rem; /* Further reduced internal padding */
+            text-align: center;
+            margin-bottom: 2rem; /* Adjusted space between cards */
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(var(--primary-blue-rgb), 0.1) 0%, rgba(var(--secondary-blue-rgb), 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 0;
+            border-radius: 15px;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02); /* Slightly less pronounced hover effect */
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); /* Slightly less strong shadow on hover */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 200px; /* Further reduced min-height */
+            position: relative;
+            z-index: 1; /* Ensure content is above pseudo-element */
+        }
+
+        .card-body img {
+            width: 60px; /* Further reduced icon size */
+            height: 60px; /* Further reduced icon size */
+            margin-bottom: 0.8rem; /* Further reduced margin */
+            filter: drop-shadow(3px 3px 8px rgba(0,0,0,0.1)); /* Slightly less intense shadow */
+            border-radius: 20%; /* Slightly less rounded for icons */
+            background-color: var(--light-blue); /* Light background for icons */
+            padding: 8px; /* Reduced padding */
+            animation: bounceIn 0.8s ease-out;
+            animation-fill-mode: backwards;
+        }
+
+        .card-title {
+            font-size: 1.6rem !important; /* Further reduced title size */
+            font-weight: 800 !important;
+            margin-bottom: 0.6rem !important; /* Further reduced margin */
+            color: var(--dark-blue-text) !important;
+        }
+
+        .card-text {
+            font-size: 0.9rem; /* Further reduced text size */
+            color: var(--text-muted-dark);
+            margin-bottom: 0.8rem; /* Further reduced margin */
+            flex-grow: 1;
+            line-height: 1.5; /* Slightly tighter line height */
+        }
+
+        .btn {
+            font-size: 0.9rem; /* Further reduced button font size */
+            padding: 0.6rem 1.8rem; /* Further reduced button padding */
+            border-radius: 2rem; /* Slightly less rounded */
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08); /* Slightly less intense shadow */
+            text-transform: uppercase;
+            letter-spacing: 0.6px; /* Slightly tighter letter spacing */
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn i {
+            margin-left: 8px; /* Reduced margin */
+            transition: transform 0.3s ease;
+        }
+
+        .btn:hover i {
+            transform: translateX(4px); /* Slightly less movement */
+        }
+
+        /* Admin Button */
+        .btn-admin {
+            background: linear-gradient(45deg, #28a745, #218838); /* Gradient */
+            border: none;
+            color: white;
+        }
+        .btn-admin:hover {
+            background: linear-gradient(45deg, #218838, #1e7e34);
+            transform: translateY(-2px); /* Reduced hover effect */
+            box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3); /* Reduced shadow */
+        }
+
+        /* Doctor Button */
+        .btn-doctor {
+            background: linear-gradient(45deg, #007bff, #0056b3); /* Gradient */
+            border: none;
+            color: white;
+        }
+        .btn-doctor:hover {
+            background: linear-gradient(45deg, #0056b3, #004085);
+            transform: translateY(-2px); /* Reduced hover effect */
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.3); /* Reduced shadow */
+        }
+
+        /* Patient Button */
+        .btn-patient {
+            background: linear-gradient(45deg, #ffc107, #e0a800); /* Gradient */
+            border: none;
+            color: var(--dark-blue-text);
+        }
+        .btn-patient:hover {
+            background: linear-gradient(45deg, #e0a800, #c69500);
+            transform: translateY(-2px); /* Reduced hover effect */
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.3); /* Reduced shadow */
+        }
+
+        /* New Patient Register Button */
+        .btn-outline-patient-register {
+            background-color: transparent;
+            border: 2px solid var(--primary-blue);
+            color: var(--primary-blue);
+            margin-top: 0.8rem; /* Further adjusted margin */
+            padding: 0.5rem 1.2rem; /* Further adjusted padding */
+            font-size: 0.75rem; /* Further adjusted font size */
+            font-weight: 600;
+            box-shadow: none;
+        }
+        .btn-outline-patient-register:hover {
+            background-color: var(--primary-blue);
+            color: var(--card-bg);
+            transform: translateY(-1px); /* Reduced hover effect */
+            box-shadow: 0 3px 8px rgba(0, 123, 255, 0.15); /* Reduced shadow */
+        }
+
+        /* --- Features Section (New) --- */
+        .features-section {
+            background-color: var(--card-bg);
+            padding: 60px 0; /* Reduced padding for the whole section */
+            margin-top: 50px; /* Slightly reduced margin-top */
+            margin-bottom: 50px;
+            border-radius: 20px; /* Slightly less rounded */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.04); /* Slightly less intense shadow */
+            animation: fadeIn 1.5s ease-out 0.5s backwards;
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 20px; /* Reduced padding */
+            transition: all 0.3s ease;
+            border-radius: 12px; /* Slightly less rounded */
+        }
+
+        .feature-item:hover {
+            background-color: var(--light-blue);
+            transform: translateY(-3px); /* Reduced hover effect */
+            box-shadow: 0 6px 15px rgba(0, 123, 255, 0.08); /* Reduced shadow */
+        }
+
+        .feature-item .icon-wrapper {
+            background-color: var(--primary-blue);
+            color: white;
+            width: 60px; /* Reduced icon size */
+            height: 60px; /* Reduced icon size */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px auto; /* Reduced margin */
+            font-size: 2rem; /* Reduced icon font size */
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15); /* Reduced shadow */
+            animation: scaleIn 0.8s ease-out 0.3s backwards;
+        }
+
+        .feature-item h3 {
+            font-size: 1.5rem; /* Reduced heading size */
+            font-weight: 700;
+            color: var(--dark-blue-text);
+            margin-bottom: 10px; /* Reduced margin */
+        }
+
+        .feature-item p {
+            font-size: 0.95rem; /* Reduced paragraph size */
+            color: var(--text-muted-dark);
+        }
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes floatEffect {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            .navbar-brand img {
+                height: 35px;
+            }
+            .hero-section {
+                padding: 70px 0;
+                text-align: center;
+            }
+            .hero-text {
+                padding-left: 0; /* Remove padding-left on smaller screens */
+            }
+            .hero-text h1 {
+                font-size: 2.8rem;
+            }
+            .hero-text p {
+                font-size: 1.1rem;
+                max-width: 90%;
+            }
+            .hero-buttons .btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+                margin: 5px;
+            }
+            .hero-image {
+            position: absolute;
+            right: auto; /* Adjust as needed */
+            bottom: auto; /* Adjust as needed */
+            width: auto; /* Increased from 650px */
+            height: auto; /* Maintain aspect ratio */
+            opacity: 0.9;
+            filter: drop-shadow(8px 8px 20px rgba(0,0,0,0.2));
+            animation: scaleIn 1.5s ease-out 0.5s backwards, floatEffect 6s ease-in-out infinite alternate-reverse;
+            z-index: 0;
+        }
+            .hero-section::before, .hero-section::after {
+                display: none; /* Hide abstract shapes */
+            }
+            .display-4.fw-bold {
+                font-size: 2.5rem;
+            }
+            .lead.text-muted {
+                font-size: 1rem;
+            }
+            .card {
+                padding: 0.8rem; /* Adjusted for small screens */
+            }
+            .card-body {
+                min-height: 180px; /* Adjusted for small screens */
+            }
+            .card-body img {
+                width: 50px; /* Adjusted for small screens */
+                height: 50px; /* Adjusted for small screens */
+            }
+            .card-title {
+                font-size: 1.4rem !important; /* Adjusted for small screens */
+            }
+            .card-text {
+                font-size: 0.85rem; /* Adjusted for small screens */
+            }
+            .btn {
+                font-size: 0.8rem; /* Adjusted for small screens */
+                padding: 0.5rem 1.5rem; /* Adjusted for small screens */
+            }
+            .feature-item {
+                margin-bottom: 25px; /* Adjusted for small screens */
+                padding: 15px; /* Adjusted for small screens */
+            }
+            .feature-item .icon-wrapper {
+                width: 50px; /* Adjusted for small screens */
+                height: 50px; /* Adjusted for small screens */
+                font-size: 1.8rem; /* Adjusted for small screens */
+            }
+            .feature-item h3 {
+                font-size: 1.3rem; /* Adjusted for small screens */
+            }
+            .feature-item p {
+                font-size: 0.85rem; /* Adjusted for small screens */
+            }
+        }
+
+        @media (max-width: 575.98px) {
+            .navbar-brand {
+                font-size: 1.3rem;
+            }
+            .navbar-brand img {
+                height: 30px;
+            }
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            .hero-text p {
+                font-size: 0.9rem;
+            }
+            .hero-buttons .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            .display-4.fw-bold {
+                font-size: 2rem;
+            }
+            .lead.text-muted {
+                font-size: 0.85rem;
+            }
+            .card-title {
+                font-size: 1.3rem !important; /* Further reduced */
+            }
+            .card-text {
+                font-size: 0.75rem; /* Further reduced */
+            }
+            .btn {
+                font-size: 0.7rem; /* Further reduced */
+                padding: 0.4rem 1.2rem; /* Further reduced */
+            }
+            .feature-item .icon-wrapper {
+                width: 45px; /* Further adjusted for small screens */
+                height: 45px; /* Further adjusted for small screens */
+                font-size: 1.5rem; /* Further adjusted for small screens */
+            }
+            .feature-item h3 {
+                font-size: 1.1rem; /* Further adjusted for small screens */
+            }
+            .feature-item p {
+                font-size: 0.75rem; /* Further adjusted for small screens */
+            }
+        }
+
+        /* RGB variables for ::before pseudo-element in card */
+        :root {
+            --primary-blue-rgb: 0, 123, 255;
+            --secondary-blue-rgb: 102, 16, 242;
+        }
+    ")</style>
+</head>
+<body>
+
+
+    <div class="container hero-section">
+        <div class="row align-items-center">
+            <div class="col-lg-7 text-lg-start text-center hero-text">
+                <h1>Revolutionize Your Healthcare Management</h1>
+                <p>Empower your hospital with intelligent solutions for patient care, administrative tasks, and efficient operations. Experience the future of healthcare.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-primary-hero">Explore Features <i class="bi bi-arrow-right"></i></a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold">Ready to Get Started? Choose Your Role</h1>
+            <p class="lead text-muted">Access tailored features based on your specific needs within the hospital ecosystem.</p>
+        </div>
+
+        <div class="row justify-content-center g-4">
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 hover-effect">
+                    <div class="card-body">
+                        <img src="https://placehold.co/100x100/DDEBFF/1a237e?text=Admin" alt="Admin Icon">
+                        <h5 class="card-title">Admin</h5>
+                        <p class="card-text">Oversee system configurations, manage users, and control all hospital operations with full administrative power.</p>
+                        <a asp-controller="Admin" asp-action="Login" class="btn btn-admin btn-lg mt-3">Login as Admin <i class="bi bi-box-arrow-in-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 hover-effect">
+                    <div class="card-body">
+                        <img src="https://placehold.co/100x100/DDEBFF/1a237e?text=Doctor" alt="Doctor Icon">
+                        <h5 class="card-title">Doctor</h5>
+                        <p class="card-text">Access patient records, manage appointments, and review medical histories to provide top-notch care.</p>
+                        <a asp-controller="Doctor" asp-action="Login" class="btn btn-doctor btn-lg mt-3">Login as Doctor <i class="bi bi-box-arrow-in-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <div class="card h-100 hover-effect">
+                    <div class="card-body">
+                        <img src="https://placehold.co/100x100/DDEBFF/1a237e?text=Patient" alt="Patient Icon">
+                        <h5 class="card-title">Patient</h5>
+                        <p class="card-text">View your profile, book appointments, and manage your payments effortlessly from anywhere.</p>
+                        <a asp-controller="Patient" asp-action="Login" class="btn btn-patient btn-lg mt-3">Login as Patient <i class="bi bi-box-arrow-in-right"></i></a>
+                        <a asp-controller="Patient" asp-action="Register" class="btn btn-outline-patient-register rounded-pill d-block mx-auto" style="max-width: 220px;">New Patient? Register Here <i class="bi bi-person-plus-fill"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="features-section" class="container features-section">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark-blue-text">Why Choose HospitalMS?</h2>
+            <p class="lead text-muted">Discover the core benefits that make our system stand out.</p>
+        </div>
+        <div class="row justify-content-center g-4">
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <div class="icon-wrapper"><i class="bi bi-person-fill-gear"></i></div>
+                    <h3>Seamless Integration</h3>
+                    <p>Connects all departments for a unified and efficient workflow, from admissions to discharge.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <div class="icon-wrapper" style="background-color: var(--success-green); box-shadow: 0 5px 15px rgba(40,167,69,0.2);"><i class="bi bi-shield-lock-fill"></i></div>
+                    <h3>Enhanced Security</h3>
+                    <p>Robust data encryption and access controls ensure patient privacy and compliance with regulations.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <div class="icon-wrapper" style="background-color: var(--warning-orange); box-shadow: 0 5px 15px rgba(253,126,20,0.2);"><i class="bi bi-bar-chart-line-fill"></i></div>
+                    <h3>Actionable Insights</h3>
+                    <p>Powerful analytics provide real-time data to optimize operations and improve patient outcomes.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+   
+
+</body>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+}
