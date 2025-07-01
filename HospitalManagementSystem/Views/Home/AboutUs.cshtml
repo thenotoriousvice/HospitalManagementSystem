@@ -1,0 +1,115 @@
+﻿<link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/abouts/about-5/assets/css/about-5.css">
+
+<style>
+    /* Custom styles for an enhanced look */
+    .hospital-about h3 {
+        color: #007bff; /* A nice blue for healthcare */
+        font-weight: 600;
+        letter-spacing: 1px;
+    }
+
+    .hospital-about h2.display-5 {
+        color: #212529; /* Darker text for readability */
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .hospital-about .btn-primary {
+        background-color: #28a745; /* A confident green for "Discover More" */
+        border-color: #28a745;
+        font-weight: bold;
+        padding: 12px 30px;
+        border-radius: 50px; /* More modern rounded button */
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+    }
+
+        .hospital-about .btn-primary:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+    .hospital-about .card {
+        border-radius: 10px; /* Slightly rounded cards */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Subtle shadow for depth */
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .hospital-about .card:hover {
+            transform: translateY(-5px); /* Lift card on hover */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+    .hospital-about .card-img-top {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        object-fit: cover; /* Ensures images fill the space nicely */
+        height: 200px; /* Consistent height for images */
+    }
+
+    .hospital-about .card-body {
+        border-top: none !important; /* Remove top border if present from original CSS */
+        padding: 25px;
+    }
+
+    .hospital-about .card-title a {
+        color: #0056b3; /* Darker blue for card titles */
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .hospital-about .card-title a:hover {
+            text-decoration: underline;
+        }
+
+    .hospital-about .card-text {
+        color: #555;
+        line-height: 1.6;
+    }
+</style>
+
+<section class="py-3 py-md-5 py-xl-8 hospital-about">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-md-10 col-lg-8">
+                <h3 class="fs-5 mb-2 text-secondary text-uppercase">ABOUT US</h3>
+                <h2 class="display-5 mb-4">Dedicated to Your Health: A Legacy of Care and Innovation.</h2>
+                
+        </div>
+    </div>
+
+    <div class="container overflow-hidden">
+        <div class="row gy-4 gy-lg-0">
+            <div class="col-12 col-lg-6">
+                <article>
+                    <div class="card border-0">
+                        <img class="card-img-top img-fluid m-0" loading="lazy" src="~/uploads/aboutus.png" alt="Our Mission">
+                        <div class="card-body border bg-white p-4">
+                            <div class="entry-header mb-3">
+                                <h2 class="card-title entry-title h4 mb-0">
+                                    <a class="link-dark text-decoration-none" href="#!">Our Mission</a>
+                                </h2>
+                            </div>
+                            <p class="card-text entry-summary text-secondary mb-3">Our mission is to provide compassionate, high-quality healthcare services that meet the needs of our community. We are committed to fostering wellness, healing, and hope through dedicated medical excellence and patient-centered care.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="col-12 col-lg-6">
+                <article>
+                    <div class="card border-0">
+                        <img class="card-img-top img-fluid m-0" loading="lazy" src="~/uploads/aboutus2.png" alt="Our Values">
+                        <div class="card-body border bg-white p-4">
+                            <div class="entry-header mb-3">
+                                <h2 class="card-title entry-title h4 mb-0">
+                                    <a class="link-dark text-decoration-none" href="#!">Our Core Values</a>
+                                </h2>
+                            </div>
+                            <p class="card-text entry-summary text-secondary mb-3">We uphold integrity, compassion, excellence, and innovation in every aspect of our work. Our team is driven by a profound respect for human dignity and a commitment to continuous improvement in healthcare delivery and patient outcomes.</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
