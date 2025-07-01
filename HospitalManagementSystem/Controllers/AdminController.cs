@@ -71,15 +71,27 @@ namespace HospitalManagementSystem.Controllers
                     {
                         var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-                        // Check if the user is an Admin
-                        if (await _userManager.IsInRoleAsync(user, "Admin"))
+                        // FIX STARTS HERE
+                        if (result.Succeeded) // Only proceed if login was successful
                         {
-                            if (Url.IsLocalUrl(returnUrl))
+                            // Check if the user is an Admin
+                            if (await _userManager.IsInRoleAsync(user, "Admin"))
                             {
-                                return Redirect(returnUrl);
+                                if (Url.IsLocalUrl(returnUrl))
+                                {
+                                    return Redirect(returnUrl);
+                                }
+                                return RedirectToAction("Dashboard", "Admin"); // Redirect Admin to Admin Dashboard
                             }
-                            return RedirectToAction("Dashboard", "Admin"); // Redirect Admin to Admin Dashboard
+                            else
+                            {
+                                // If the user is found and password is correct, but they are not an Admin, sign them out
+                                await _signInManager.SignOutAsync();
+                                ModelState.AddModelError(string.Empty, "You do not have administrative privileges.");
+                                return View(model);
+                            }
                         }
+                        // FIX ENDS HERE
 
                         // If login failed (e.g., wrong password or locked out)
                         else
