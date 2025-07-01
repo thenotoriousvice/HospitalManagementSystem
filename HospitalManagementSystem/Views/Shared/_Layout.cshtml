@@ -23,10 +23,37 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-white py-3 shadow-sm border-bottom">
             <div class="container-fluid px-4">
-                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fas fa-hospital-alt fa-2x me-2 text-primary"></i>
-                    <span class="fs-4 fw-bold text-primary">MediCare HMS</span>
-                </a>
+                @if (SignInManager.IsSignedIn(User))
+                {
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Admin" asp-action="Index">
+                            <i class="fas fa-hospital-alt fa-2x me-2 text-primary"></i>
+                            <span class="fs-4 fw-bold text-primary">MediCare HMS</span>
+                        </a>
+                    }
+                    else if (User.IsInRole("Doctor"))
+                    {
+                        <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Doctor" asp-action="Dashboard">
+                            <i class="fas fa-hospital-alt fa-2x me-2 text-primary"></i>
+                            <span class="fs-4 fw-bold text-primary">MediCare HMS</span>
+                        </a>
+                    }
+                    else if (User.IsInRole("Patient")) // Added explicit Patient role check
+                    {
+                        <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Patient" asp-action="MyProfile">
+                            <i class="fas fa-hospital-alt fa-2x me-2 text-primary"></i>
+                            <span class="fs-4 fw-bold text-primary">MediCare HMS</span>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-hospital-alt fa-2x me-2 text-primary"></i>
+                        <span class="fs-4 fw-bold text-primary">MediCare HMS</span>
+                    </a>
+                }
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -79,11 +106,26 @@
                                     </ul>
                                 </li>
                             }
-                            else // For any other authenticated user role (e.g., Patient if they have an Identity account)
+                            else if (User.IsInRole("Patient")) // Added explicit Patient role check
                             {
+                                var currentUser = await UserManager.GetUserAsync(User);
+                                string displayIdentifier = currentUser?.Email; // Default to email
+
+                                // Prioritize displaying the contact number (PhoneNumber) if available and different from Email
+                                if (!string.IsNullOrEmpty(currentUser?.PhoneNumber) && currentUser.PhoneNumber != currentUser.Email)
+                                {
+                                    displayIdentifier = currentUser.PhoneNumber;
+                                }
+                                // As a fallback, use UserName if Email and PhoneNumber are not suitable for display
+                                // This covers cases where UserName might explicitly be set to the preferred login identifier
+                                else if (string.IsNullOrEmpty(displayIdentifier) && !string.IsNullOrEmpty(currentUser?.UserName))
+                                {
+                                    displayIdentifier = currentUser.UserName;
+                                }
+
                                 <li class="nav-item dropdown">
                                     <a class="nav-link dropdown-toggle fw-medium text-dark-emphasis px-3 py-2 rounded-3" href="#" id="navbarDropdownUserProfile" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-user-circle me-1"></i> Hello @UserManager.GetUserName(User)!
+                                        <i class="fas fa-user-circle me-1"></i> Hello @displayIdentifier!
                                     </a>
                                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUserProfile">
                                         <li><h6 class="dropdown-header">My Account</h6></li>
@@ -115,7 +157,7 @@
                             <li class="nav-item">
                                 <a class="nav-link fw-medium text-dark-emphasis px-3 py-2 rounded-3" href="#">Contact</a>
                             </li>
-
+                            
                         }
                     </ul>
                 </div>
@@ -130,10 +172,10 @@
 
     <footer id="mainAppFooter" class="border-top footer text-muted">
         <div class="container">
-            &copy; 2025 - YourAppName - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; @DateTime.Now.Year - HospitalManagementSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
-   
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
@@ -143,4 +185,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

@@ -10,9 +10,6 @@ namespace HospitalManagementSystem.Repository.Models
 
         [Required(ErrorMessage = "Full Name is required.")]
         [StringLength(100, ErrorMessage = "Full Name cannot exceed 100 characters.")]
-        // Added RegularExpression for FullName validation
-        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Full Name can only contain alphabetic characters and spaces.")]
-        [Display(Name = "Full Name")] // Added Display attribute for consistent labeling
         public string FullName { get; set; }
 
         [Required(ErrorMessage = "Email is required.")]
