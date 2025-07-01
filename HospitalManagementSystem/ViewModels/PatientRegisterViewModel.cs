@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.RegularExpressions;
 
 namespace HospitalManagementSystem.ViewModels
 {
@@ -6,6 +7,8 @@ namespace HospitalManagementSystem.ViewModels
     {
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
+        // --- ADD THIS LINE FOR ALPHABETIC VALIDATION ---
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Patient Name can only contain alphabetic characters and spaces.")]
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Date of Birth is required.")]
