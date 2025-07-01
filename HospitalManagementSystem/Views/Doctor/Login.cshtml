@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Doctor Login";
     Layout = "~/Views/Shared/_Layout.cshtml"; // Ensure this points to your main layout
 }
@@ -43,7 +42,12 @@
 
                             <div class="form-group mb-3">
                                 <label for="Password" class="control-label">Password</label>
-                                <input type="password" name="Password" class="form-control" required />
+                                <div class="input-group">
+                                    <input type="password" name="Password" id="password" class="form-control" required />
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                        <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                                    </button>
+                                </div>
                             </div>
 
                             <div class="form-group form-check mb-3">
@@ -51,18 +55,13 @@
                                 <label class="form-check-label" for="rememberMe">Remember me?</label>
                             </div>
 
-                            <div class="form-group mb-3 d-flex justify-content-center mt-4">
+                            <div class="form-group mb-3 d-grid gap-2">
+                                @* Changed to d-grid for block-level buttons *@
                                 <button type="submit" class="btn btn-primary">Login</button>
-                                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary btn-md ">Back to Home</a> @* Changed btn-lg to btn-md **@
-
+                                <a asp-action="Index" asp-controller="Home" class="btn btn-outline-secondary">Back to Home</a>
                             </div>
                         </form>
                     </div>
-                </div>
-
-                <div class="text-center mt-4">
-                    @* Centered the registration link *@
-                    <p>Don't have an account? <a asp-action="Register">Register here</a>.</p>
                 </div>
             </div>
         </div>
@@ -74,5 +73,27 @@
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const togglePassword = document.getElementById('togglePassword');
+                const password = document.getElementById('password');
+                const toggleIcon = document.getElementById('toggleIcon');
+
+                togglePassword.addEventListener('click', function (e) {
+                    // toggle the type attribute
+                    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                    password.setAttribute('type', type);
+
+                    // toggle the eye icon
+                    if (type === 'password') {
+                        toggleIcon.classList.remove('bi-eye');
+                        toggleIcon.classList.add('bi-eye-slash');
+                    } else {
+                        toggleIcon.classList.remove('bi-eye-slash');
+                        toggleIcon.classList.add('bi-eye');
+                    }
+                });
+            });
+        </script>
     }
 </body>
