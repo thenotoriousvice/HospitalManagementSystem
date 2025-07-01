@@ -349,7 +349,7 @@
                             <div>
                                 <i class="bi bi-calendar-check me-2"></i> Upcoming Appointments
                             </div>
-                           
+
                         </div>
                     </div>
                     <div class="card-body p-4">
@@ -360,7 +360,8 @@
                                     <thead class="table-light">
                                         <tr>
                                             <th>Doctor Name</th>
-                                            <th>Department</th>
+                                            <th>Department Name</th>
+                                            <th>Description</th>
                                             <th>Appointment Date</th>
                                             <th>Time</th>
                                             <th>Reason</th>
@@ -373,7 +374,8 @@
                                         {
                                             <tr>
                                                 <td>@Html.DisplayFor(modelItem => item.Doctor.FullName)</td>
-                                                <td>@Html.DisplayFor(modelItem => item.Doctor.Department)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.Doctor.Department.Name)</td>
+                                                <td>@Html.DisplayFor(modelItem => item.Doctor.Department.Description)</td>
                                                 <td>@Html.DisplayFor(modelItem => item.AppointmentDate)</td>
                                                 <td>
                                                     @(item.AppointmentTime.HasValue
@@ -387,8 +389,8 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    @if (item.Status == HospitalManagementSystem.Repository.Models.AppointmentStatus.Pending || 
-                                                         item.Status == HospitalManagementSystem.Repository.Models.AppointmentStatus.Approved)
+                                                    @if (item.Status == HospitalManagementSystem.Repository.Models.AppointmentStatus.Pending ||
+                                                   item.Status == HospitalManagementSystem.Repository.Models.AppointmentStatus.Approved)
                                                     {
                                                         <form asp-controller="Appointment" asp-action="Cancel" method="post" class="d-inline">
                                                             <input type="hidden" name="id" value="@item.Id" />
@@ -437,17 +439,17 @@
                                                                     <td>@bill.BillDate.ToString("dd-MMM-yyyy hh:mm tt")</td>
                                                                     <td>
                                                                         <span class="badge rounded-pill text-uppercase
-                                                                      @(bill.Status == HospitalManagementSystem.Repository.Models.BillStatus.PENDING_PAYMENT ? "badge-pending-payment" :
-                                                                                                                                          bill.Status == HospitalManagementSystem.Repository.Models.BillStatus.PAID ? "badge-paid" :
-                                                                                                                                          "badge-pending-insurance")">
-                                                                @bill.Status.ToString().Replace("_", " ")
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="showBillDetailsModal(@bill.BillId)">
-                                                                <i class="bi bi-eye"></i> View Details
-                                                            </button>
-                                                            @if (bill.Status == HospitalManagementSystem.Repository.Models.BillStatus.PENDING_PAYMENT)
+                                                                @(bill.Status == HospitalManagementSystem.Repository.Models.BillStatus.PENDING_PAYMENT ? "badge-pending-payment" :
+                                                                    bill.Status == HospitalManagementSystem.Repository.Models.BillStatus.PAID ? "badge-paid" :
+                                                                    "badge-pending-insurance")">
+                                                                            @bill.Status.ToString().Replace("_", " ")
+                                                                        </span>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button type="button" class="btn btn-sm btn-outline-primary" onclick="showBillDetailsModal(@bill.BillId)">
+                                                                            <i class="bi bi-eye"></i> View Details
+                                                                        </button>
+                                                                        @if (bill.Status == HospitalManagementSystem.Repository.Models.BillStatus.PENDING_PAYMENT)
                                                                         {
                                                                             <a asp-action="ProcessPayment" asp-controller="Patient" asp-route-billId="@bill.BillId" class="btn btn-sm btn-success ms-2">
                                                                                 <i class="bi bi-currency-rupee"></i> Pay Now
@@ -480,11 +482,11 @@
                                         <i class="bi bi-calendar-check me-2"></i>No Upcoming Appointments
                                     </h5>
                                     <p class="mb-3">You currently have no upcoming appointments scheduled.</p>
-                                    
-                                <a asp-controller="Appointments" asp-action="BookAppointment" class="btn btn-primary btn-sm">
-                                    <i class="bi bi-plus-circle me-1"></i> Book Another Appointment
-                                </a>
-                            
+
+                                    <a asp-controller="Appointments" asp-action="BookAppointment" class="btn btn-primary btn-sm">
+                                        <i class="bi bi-plus-circle me-1"></i> Book Another Appointment
+                                    </a>
+
                                 </div>
                             </div>
                         }
