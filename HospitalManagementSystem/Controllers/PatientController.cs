@@ -82,7 +82,7 @@ namespace HospitalManagementSystem.Controllers
                     {
                         // Try to find the user by email first, then by contact number
                         var newUser = await _userManager.FindByEmailAsync(model.Email) ??
-                                      await _userManager.FindByNameAsync(model.ContactNumber);
+                                          await _userManager.FindByNameAsync(model.ContactNumber);
 
                         if (newUser != null)
                         {
@@ -170,6 +170,9 @@ namespace HospitalManagementSystem.Controllers
                     {
                         if (await _userManager.IsInRoleAsync(user, "Patient"))
                         {
+                            // Store the user's identifier in TempData
+                            TempData["UserIdentifier"] = model.ContactNumberOrEmail;
+
                             if (Url.IsLocalUrl(returnUrl))
                             {
                                 return Redirect(returnUrl);
