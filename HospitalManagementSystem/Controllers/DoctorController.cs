@@ -57,6 +57,7 @@ namespace HospitalManagementSystem.Controllers
             return View();
         }
 
+
         // POST: /Doctor/Login
         [HttpPost]
         [AllowAnonymous]
@@ -66,7 +67,26 @@ namespace HospitalManagementSystem.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.ContactNumberOrEmail) ?? await _userManager.FindByEmailAsync(model.ContactNumberOrEmail);
+                IdentityUser user = null;
+
+                // First, try to find the user by Email
+                user = await _userManager.FindByEmailAsync(model.ContactNumberOrEmail);
+
+                // If not found by email, and the input does not contain an '@' (suggesting it's not an email),
+                // try to find by PhoneNumber.
+                // This also handles cases where UserName might coincidentally be set to the phone number.
+                if (user == null)
+                {
+                    // Attempt to find by PhoneNumber. We query the Users DbSet directly.
+                    user = _userManager.Users.FirstOrDefault(u => u.PhoneNumber == model.ContactNumberOrEmail);
+                }
+
+                // As a fallback, try to find by UserName, which might still be the email or another identifier
+                if (user == null)
+                {
+                    user = await _userManager.FindByNameAsync(model.ContactNumberOrEmail);
+                }
+
 
                 if (user != null)
                 {
