@@ -3,22 +3,22 @@ using HospitalManagementSystem.Repository.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using System.IO;
-using System.Threading.Tasks; // Needed for Task
-using System; // Needed for Guid
+using System.Threading.Tasks; 
+using System;
 
-namespace HospitalManagementSystem.Controllers // Changed namespace based on common ASP.NET Core project structure. If yours is different, please revert.
+namespace HospitalManagementSystem.Controllers
 {
     public class BillingController : Controller
     {
         private readonly IBillService _billService;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IAppointmentService _appointmentService; // Inject IAppointmentService
+        private readonly IAppointmentService _appointmentService; 
 
         public BillingController(IBillService billService, IWebHostEnvironment webHostEnvironment, IAppointmentService appointmentService)
         {
             _billService = billService;
             _webHostEnvironment = webHostEnvironment;
-            _appointmentService = appointmentService; // Initialize IAppointmentService
+            _appointmentService = appointmentService; 
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace HospitalManagementSystem.Controllers // Changed namespace based on com
         {
             Bill bill = new Bill();
             ViewBag.Action = "Submit";
-            ViewBag.AppointmentId = appointmentId; // Pass AppointmentId to the view
+            ViewBag.AppointmentId = appointmentId; 
 
             if (billId > 0)
             {
@@ -37,7 +37,7 @@ namespace HospitalManagementSystem.Controllers // Changed namespace based on com
                     ViewBag.Action = "Update";
                 }
             }
-            else if (patientId.HasValue) // Only pre-fill PatientId if creating a new bill and patientId is provided
+            else if (patientId.HasValue) 
             {
                 bill.PatientId = patientId.Value;
             }
@@ -94,16 +94,16 @@ namespace HospitalManagementSystem.Controllers // Changed namespace based on com
                 }
 
                 TempData["SuccessMessage"] = "Bill uploaded successfully and appointment status updated to Payment Pending.";
-                // Redirect to the doctor's MyAppointments page
-                return RedirectToAction("MyAppointments", "Doctor"); // Assuming "Doctor" is the controller for MyAppointments
+               
+                return RedirectToAction("MyAppointments", "Doctor"); 
             }
 
-            // If model state is not valid, return to the form view
+           
             ViewBag.AppointmentId = appointmentId;
             return View(bill);
         }
 
-        // Removed Payment and ProcessPayment actions as per user request
+        
 
         [HttpGet]
         public IActionResult GetBillDetails(int billId)

@@ -7,7 +7,7 @@ namespace HospitalManagementSystem.ViewModels
     {
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        // --- ADD THIS LINE FOR ALPHABETIC VALIDATION ---
+       
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "Patient Name can only contain alphabetic characters and spaces.")]
         public string Name { get; set; }
 
@@ -22,12 +22,12 @@ namespace HospitalManagementSystem.ViewModels
         [Required(ErrorMessage = "Contact Number is required.")]
         [Phone(ErrorMessage = "Invalid phone number format.")]
         [StringLength(15, ErrorMessage = "Contact Number cannot exceed 15 characters.")]
-        public string ContactNumber { get; set; } // Used as UserName/Email for Identity
+        public string ContactNumber { get; set; } 
 
-        [Required(ErrorMessage = "Email Address is required.")] // <<<< ADD THIS
-        [EmailAddress(ErrorMessage = "Invalid Email Address.")]  // <<<< ADD THIS
-        [StringLength(255, ErrorMessage = "Email Address cannot exceed 255 characters.")] // <<<< ADD THIS
-        public string Email { get; set; } // <<<< ADD THIS PROPERTY
+        [Required(ErrorMessage = "Email Address is required.")] 
+        [EmailAddress(ErrorMessage = "Invalid Email Address.")]  
+        [StringLength(255, ErrorMessage = "Email Address cannot exceed 255 characters.")] 
+        public string Email { get; set; } 
 
         [Required(ErrorMessage = "Address is required.")]
         [StringLength(255, ErrorMessage = "Address cannot exceed 255 characters.")]

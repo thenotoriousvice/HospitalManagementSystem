@@ -26,20 +26,20 @@ namespace HospitalManagementSystem.Controllers
             _context = context;
         }
 
-        // GET/POST: Appointments/BookAppointment (Patient Booking Form)
+        
         [HttpGet]
         public async Task<IActionResult> BookAppointment()
         {
             try
             {
-                // Get the current patient's ID from claims
+               
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (userId == null)
                 {
                     return Unauthorized("User ID not found.");
                 }
 
-                // Initialize all view bag items first
+                
                 var departments = await _appointmentService.GetAllDepartmentsAsync();
                 var doctors = await _appointmentService.GetDoctorsByDepartmentAsync(0);
                 var appointmentDates = GetNext30DaysDates();
@@ -50,12 +50,12 @@ namespace HospitalManagementSystem.Controllers
                 ViewBag.AppointmentDates = appointmentDates;
                 ViewBag.AvailableTimeSlots = new SelectList(availableTimeSlots);
 
-                // Get patient details
+                
                 var patient = await _appointmentService.GetPatientByUserIdAsync(userId);
 
                 if (patient != null)
                 {
-                    // Pre-fill patient details
+                   
                     var appointment = new Appointment
                     {
                         PatientId = patient.PatientId,
@@ -68,13 +68,13 @@ namespace HospitalManagementSystem.Controllers
                 }
                 else
                 {
-                    // If patient profile not found, show empty form
+                    
                     return View(new Appointment());
                 }
             }
             catch (Exception ex)
             {
-                // Log the error
+                
                 Console.WriteLine($"Error in BookAppointment: {ex.Message}");
                 return View(new Appointment());
             }
@@ -99,7 +99,7 @@ namespace HospitalManagementSystem.Controllers
                     return View(appointment);
                 }
 
-                // Set patient details from profile
+                // setting patient details from profile
                 appointment.PatientId = patient.PatientId;
                 appointment.PatientName = patient.Name;
                 appointment.PatientEmail = patient.Email;
@@ -107,7 +107,7 @@ namespace HospitalManagementSystem.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    // Re-populate dropdowns if validation fails
+                    
                     ViewBag.Departments = new SelectList(await _appointmentService.GetAllDepartmentsAsync(), "Id", "Name");
                     ViewBag.Doctors = new SelectList(await _appointmentService.GetDoctorsByDepartmentAsync(appointment.DepartmentId ?? 0), "Id", "FullName");
                     ViewBag.AppointmentDates = GetNext30DaysDates();
@@ -158,7 +158,7 @@ namespace HospitalManagementSystem.Controllers
             return dates;
         }
 
-        // AJAX endpoint to get doctors by department (includes working hours now)
+        
         [HttpGet]
         public async Task<JsonResult> GetDoctorsByDepartment(int departmentId)
         {
@@ -192,13 +192,13 @@ namespace HospitalManagementSystem.Controllers
             }));
         }
 
-        // GET: Appointments/BookingConfirmation
+        
         public IActionResult BookingConfirmation()
         {
             return View();
         }
 
-        // GET: Appointments/DoctorDashboard (Displays pending appointments for a doctor/department)
+        
         [Authorize(Roles = "Doctor,Admin")]
         public async Task<IActionResult> DoctorDashboard(int? doctorId, int? departmentFilterId)
         {
@@ -229,7 +229,7 @@ namespace HospitalManagementSystem.Controllers
             return View(pendingAppointments);
         }
 
-        // POST: Appointments/Approve (Doctor approves an appointment and sets the time)
+        // POST   -  Appointments/Approve (Doctor approves an appointment and sets the time)
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Doctor,Admin")]
@@ -268,7 +268,7 @@ namespace HospitalManagementSystem.Controllers
             return RedirectToAction(nameof(DoctorDashboard));
         }
 
-        // POST: Appointments/Reject (Doctor rejects an appointment)
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Doctor,Admin")]
@@ -300,7 +300,7 @@ namespace HospitalManagementSystem.Controllers
             return RedirectToAction(nameof(DoctorDashboard));
         }
 
-        // POST: Appointments/Cancel (For both doctor and patient)
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]

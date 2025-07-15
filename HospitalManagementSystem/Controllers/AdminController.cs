@@ -3,9 +3,8 @@ using HospitalManagementSystem.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering; // Added for SelectList
-using HospitalManagementSystem.Repository.Models; // Added for DoctorRegistrationViewModel and Department
-
+using Microsoft.AspNetCore.Mvc.Rendering; 
+using HospitalManagementSystem.Repository.Models; 
 namespace HospitalManagementSystem.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -14,21 +13,21 @@ namespace HospitalManagementSystem.Controllers
         private readonly IPatientService _patientService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly IAppointmentService _appointmentService; // Injected: IAppointmentService
-        private readonly IDoctorAccountService _doctorAccountService; // Injected: IDoctorAccountService
+        private readonly IAppointmentService _appointmentService; 
+        private readonly IDoctorAccountService _doctorAccountService; 
 
         public AdminController(
             IPatientService patientService,
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
-            IAppointmentService appointmentService, // Constructor parameter
-            IDoctorAccountService doctorAccountService) // Constructor parameter
+            IAppointmentService appointmentService, 
+            IDoctorAccountService doctorAccountService) 
         {
             _patientService = patientService;
             _userManager = userManager;
             _signInManager = signInManager;
-            _appointmentService = appointmentService; // Assigned
-            _doctorAccountService = doctorAccountService; // Assigned
+            _appointmentService = appointmentService;
+            _doctorAccountService = doctorAccountService; 
         }
 
         [AllowAnonymous]
@@ -49,7 +48,7 @@ namespace HospitalManagementSystem.Controllers
                 IdentityUser user = null;
                 try
                 {
-                    // Try to find user by username (which is email during registration) or by email
+                    // user by username or by email
                     user = await _userManager.FindByNameAsync(model.ContactNumberOrEmail);
                     if (user == null)
                     {
@@ -58,7 +57,7 @@ namespace HospitalManagementSystem.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Log the exception (e.g., using ILogger)
+                    
                     Console.WriteLine($"Error finding user in Login: {ex.Message}");
                     ModelState.AddModelError(string.Empty, "An error occurred while trying to find your account. Please try again.");
                     return View(model);
@@ -71,17 +70,17 @@ namespace HospitalManagementSystem.Controllers
                     {
                         var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, lockoutOnFailure: false);
 
-                        // FIX STARTS HERE
-                        if (result.Succeeded) // Only proceed if login was successful
+                        
+                        if (result.Succeeded) 
                         {
-                            // Check if the user is an Admin
+                            
                             if (await _userManager.IsInRoleAsync(user, "Admin"))
                             {
                                 if (Url.IsLocalUrl(returnUrl))
                                 {
                                     return Redirect(returnUrl);
                                 }
-                                return RedirectToAction("Dashboard", "Admin"); // Redirect Admin to Admin Dashboard
+                                return RedirectToAction("Dashboard", "Admin"); 
                             }
                             else
                             {
@@ -91,12 +90,10 @@ namespace HospitalManagementSystem.Controllers
                                 return View(model);
                             }
                         }
-                        // FIX ENDS HERE
-
-                        // If login failed (e.g., wrong password or locked out)
+                       
                         else
                         {
-                            await _signInManager.SignOutAsync(); // Ensure previous sessions are cleared
+                            await _signInManager.SignOutAsync(); 
                             if (result.IsLockedOut)
                             {
                                 ModelState.AddModelError(string.Empty, "Account locked out. Please try again later.");
@@ -120,16 +117,16 @@ namespace HospitalManagementSystem.Controllers
 
                     catch (Exception ex)
                     {
-                        // Log the exception (e.g., using ILogger)
+                        
                         Console.WriteLine($"Error during PasswordSignInAsync: {ex.Message}");
                         ModelState.AddModelError(string.Empty, "An unexpected error occurred during login. Please try again.");
                         return View(model);
                     }
                 }
-                // If user is null (not found)
+               
                 else
                 {
-                    await _signInManager.SignOutAsync(); // Ensure previous sessions are cleared
+                    await _signInManager.SignOutAsync(); 
                     ModelState.AddModelError(string.Empty, "Invalid login attempt. Account not found.");
                 }
             }
@@ -143,27 +140,27 @@ namespace HospitalManagementSystem.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Doctors() // ONLY ONE INSTANCE REMAINS
+        public async Task<IActionResult> Doctors() 
         {
             ViewData["Title"] = "Manage Doctors";
             var doctors = await _doctorAccountService.GetAllDoctorsAsync();
             return View(doctors);
         }
 
-        // Action for managing appointments (replaces the placeholder)
+        
         public async Task<IActionResult> Appointments()
         {
-            // Fetch all appointments including related data
+            
             var allAppointments = await _appointmentService.GetAllAppointmentsAsync();
 
-            // Transform to DoctorAppointmentViewModel to include Bill information
+            
             var allDoctorAppointmentViewModels = allAppointments.Select(a => new DoctorAppointmentViewModel
             {
                 Appointment = a,
-                Bill = a.Bill // Populate the Bill property
+                Bill = a.Bill 
             }).ToList();
 
-            // Categorize into upcoming and past appointments
+            
             var upcomingAppointments = allDoctorAppointmentViewModels
                 .Where(a => a.Appointment.AppointmentDate.Date >= DateTime.Today.Date)
                 .OrderBy(a => a.Appointment.AppointmentDate)
@@ -176,11 +173,11 @@ namespace HospitalManagementSystem.Controllers
                 .ThenByDescending(a => a.Appointment.AppointmentTime)
                 .ToList();
 
-            // Pass categorized lists to the view using ViewBag
+           
             ViewBag.UpcomingAppointments = upcomingAppointments;
             ViewBag.PastAppointments = pastAppointments;
 
-            // No need to pass a model if using ViewBag extensively
+           
             return View();
         }
 
@@ -229,20 +226,20 @@ namespace HospitalManagementSystem.Controllers
             return RedirectToAction("Appointments");
         }
 
-        // GET: /Admin/RegisterDoctor
+        // GET --> /Admin/RegisterDoctor
         public async Task<IActionResult> RegisterDoctor()
         {
             ViewData["Title"] = "Register New Doctor";
-            // Populate ViewBag.Departments with actual data
+            
             ViewBag.Departments = new SelectList(await _appointmentService.GetAllDepartmentsAsync(), "Id", "Name");
 
-            // Ensure the view receives a new DoctorRegistrationViewModel
+           
             return View("~/Views/Admin/RegisterDoctor.cshtml", new DoctorRegistrationViewModel());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterDoctor(DoctorRegistrationViewModel model) // Model type changed
+        public async Task<IActionResult> RegisterDoctor(DoctorRegistrationViewModel model) 
         {
             if (ModelState.IsValid)
             {
@@ -253,7 +250,7 @@ namespace HospitalManagementSystem.Controllers
                 {
                     await _userManager.AddToRoleAsync(user, "Doctor");
 
-                    // Save the rest of the doctor's profile details
+                    
                     var doctorProfile = new Doctor
                     {
                         IdentityUserId = user.Id,
@@ -264,10 +261,10 @@ namespace HospitalManagementSystem.Controllers
                         DepartmentId = model.DepartmentId
                     };
 
-                    // Assuming CreateDoctorProfileAsync handles adding a new Doctor entity to DB
+                   
                     var doctorSaveResult = await _doctorAccountService.CreateDoctorProfileAsync(doctorProfile);
 
-                    if (doctorSaveResult) // Assuming CreateDoctorProfileAsync returns a bool or similar success indicator
+                    if (doctorSaveResult) 
                     {
                         TempData["Message"] = "Doctor registered successfully!";
                         ModelState.Clear();
@@ -287,7 +284,7 @@ namespace HospitalManagementSystem.Controllers
                 }
             }
             ViewData["Title"] = "Register New Doctor";
-            // Repopulate ViewBag.Departments if returning to view due to validation errors
+            
             ViewBag.Departments = new SelectList(await _appointmentService.GetAllDepartmentsAsync(), "Id", "Name", model.DepartmentId);
             return View("~/Views/Admin/RegisterDoctor.cshtml", model);
         }
@@ -339,7 +336,7 @@ namespace HospitalManagementSystem.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
-            // Assuming this is for patient management from Admin perspective
+           
             var patients = await _patientService.GetAllPatients();
             return View(patients);
         }

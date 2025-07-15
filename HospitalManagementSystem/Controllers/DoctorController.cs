@@ -1,22 +1,21 @@
-﻿// Updated DoctorController.cs
-// --- Combined Using Statements ---
+﻿
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using HospitalManagementSystem.BusinessLogic.Interfaces;
-using HospitalManagementSystem.Repository.Models; // For custom project models and ViewModels
+using HospitalManagementSystem.Repository.Models; 
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Rendering; // For SelectList
-using Microsoft.AspNetCore.Authorization; // For Authorize and AllowAnonymous attributes
-using System.Security.Claims; // For accessing User.FindFirstValue
-using System; // For TimeSpan
-using System.Linq; // For LINQ operations
+using Microsoft.AspNetCore.Mvc.Rendering; 
+using Microsoft.AspNetCore.Authorization; 
+using System.Security.Claims; 
+using System; 
+using System.Linq; 
 using System.Collections.Generic;
-using HospitalManagementSystem.ViewModels; // For List<T>
+using HospitalManagementSystem.ViewModels;
 using HospitalManagementSystem.BusinessLogic.Implementation;
 
 namespace HospitalManagementSystem.Controllers
 {
-    [Authorize(Roles = "Doctor")] // All actions require Doctor role by default
+    [Authorize(Roles = "Doctor")]
     public class DoctorController : Controller
     {
         // --- Combined Dependencies ---
@@ -26,7 +25,7 @@ namespace HospitalManagementSystem.Controllers
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IBillService _billService;
 
-        // --- Updated Constructor with all Dependencies ---
+       
         public DoctorController(
             IDoctorAccountService doctorAccountService,
             IAppointmentService appointmentService,
@@ -41,14 +40,7 @@ namespace HospitalManagementSystem.Controllers
             _billService = billService;
         }
 
-        // =====================================================================
-        // == ANONYMOUS/PUBLIC ACTIONS (from original AccountController) ==
-        // =====================================================================
-
-        // Removed the Doctor registration GET and POST actions from here
-        // as registration is now handled by AdminController.
-
-        // GET: /Doctor/Login
+       
         [HttpGet]
         [AllowAnonymous]
         public IActionResult Login(string returnUrl = null)
@@ -69,19 +61,17 @@ namespace HospitalManagementSystem.Controllers
             {
                 IdentityUser user = null;
 
-                // First, try to find the user by Email
+                
                 user = await _userManager.FindByEmailAsync(model.ContactNumberOrEmail);
 
-                // If not found by email, and the input does not contain an '@' (suggesting it's not an email),
-                // try to find by PhoneNumber.
-                // This also handles cases where UserName might coincidentally be set to the phone number.
+              
                 if (user == null)
                 {
-                    // Attempt to find by PhoneNumber. We query the Users DbSet directly.
+                    //  find by PhoneNumber.
                     user = _userManager.Users.FirstOrDefault(u => u.PhoneNumber == model.ContactNumberOrEmail);
                 }
 
-                // As a fallback, try to find by UserName, which might still be the email or another identifier
+                
                 if (user == null)
                 {
                     user = await _userManager.FindByNameAsync(model.ContactNumberOrEmail);
@@ -100,7 +90,7 @@ namespace HospitalManagementSystem.Controllers
                             {
                                 return Redirect(returnUrl);
                             }
-                            // Redirect to Dashboard after successful doctor login
+                            
                             return RedirectToAction(nameof(Dashboard));
                         }
                         else
@@ -143,10 +133,7 @@ namespace HospitalManagementSystem.Controllers
         }
 
 
-        // =====================================================================
-        // == AUTHORIZED DOCTOR ACTIONS (from original DoctorProfileController) ==
-        // =====================================================================
-
+        
         // GET: /Doctor/Dashboard
         public async Task<IActionResult> Dashboard()
         {
@@ -155,8 +142,7 @@ namespace HospitalManagementSystem.Controllers
 
             var doctor = await _doctorAccountService.GetDoctorProfileByUserIdAsync(userId);
 
-            // Removed the direct RedirectToAction(nameof(EditProfile)) from here.
-            // Instead, we will show a message on the dashboard if the profile is incomplete.
+           
             if (doctor == null || !doctor.WorkingHoursStart.HasValue || !doctor.WorkingHoursEnd.HasValue)
             {
                 TempData["InfoMessage"] = "Welcome! Your doctor profile is incomplete. Please set your working hours by editing your profile.";
@@ -188,22 +174,19 @@ namespace HospitalManagementSystem.Controllers
 
             var allAppointments = await _appointmentService.GetAllAppointmentsForDoctorAsync(doctor.Id);
 
-            // --- MODIFICATION START ---
+           
             var doctorAppointmentViewModels = new List<DoctorAppointmentViewModel>();
 
             foreach (var appointment in allAppointments)
             {
                 Bill? associatedBill = null;
-                // Only try to fetch a bill if the appointment is completed or payment related
+                // Only fetch a bill if the appointment is completed or payment related
                 if (appointment.PatientId.HasValue &&
                     (appointment.Status == AppointmentStatus.Completed ||
                      appointment.Status == AppointmentStatus.PaymentPending ||
                      appointment.Status == AppointmentStatus.PaymentCompleted))
                 {
-                    // Fetch all bills for the patient and try to find the one associated with this appointment.
-                    // This assumes the Bill model has an 'AppointmentId' property to link it.
-                    // If your Bill model does NOT have an AppointmentId, you will need to
-                    // adjust this logic or modify your Bill model to include it for direct linking.
+                    
                     var patientBills = _billService.GetBillsByPatientId(appointment.PatientId.Value);
                     associatedBill = patientBills.FirstOrDefault(b => b.AppointmentId == appointment.Id);
                 }
@@ -262,7 +245,7 @@ namespace HospitalManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProfile(EditProfileViewModel model)
         {
-            ModelState.Remove(nameof(model.Email)); // Email is part of IdentityUser, not Doctor profile for update
+            ModelState.Remove(nameof(model.Email)); 
             if (!ModelState.IsValid)
             {
                 ViewBag.Departments = new SelectList(await _appointmentService.GetAllDepartmentsAsync(), "Id", "Name", model.DepartmentId);
@@ -281,7 +264,7 @@ namespace HospitalManagementSystem.Controllers
             if (result.Succeeded)
             {
                 TempData["SuccessMessage"] = "Profile updated successfully!";
-                return RedirectToAction(nameof(Dashboard)); // Redirect to Dashboard after profile is complete
+                return RedirectToAction(nameof(Dashboard)); 
             }
 
             foreach (var error in result.Errors)
@@ -294,7 +277,7 @@ namespace HospitalManagementSystem.Controllers
             return View(model);
         }
 
-        // --- Appointment Management Actions ---
+        
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -324,7 +307,7 @@ namespace HospitalManagementSystem.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // Good practice for POST requests from forms
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> Complete(int id)
         {
             try
@@ -343,11 +326,11 @@ namespace HospitalManagementSystem.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"An error occurred while completing the appointment: {ex.Message}";
-                // Log the exception (e.g., using a logger)
+               
                 Console.Error.WriteLine($"Error in DoctorController.Complete: {ex.Message}");
             }
 
-            return RedirectToAction("MyAppointments"); // Redirect back to the MyAppointments view
+            return RedirectToAction("MyAppointments"); 
         }
     }
 }

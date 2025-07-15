@@ -9,20 +9,20 @@ namespace HospitalManagementSystem.Repository.Models
         public int BillId { get; set; }
         public int PatientId { get; set; }
         public decimal TotalAmount { get; set; }
-        public BillStatus Status { get; set; } // Changed from PaymentStatus to BillStatus
+        public BillStatus Status { get; set; } 
         public DateTime BillDate { get; set; }
 
-        public string? UploadedFilePath { get; set; } // New property for uploaded document path
+        public string? UploadedFilePath { get; set; } 
 
-        public int? AppointmentId { get; set; } // Foreign key to Appointment
+        public int? AppointmentId { get; set; } 
         public Appointment? Appointment { get; set; } 
     }
 
-    public enum BillStatus // New enum to handle different bill states
+    public enum BillStatus 
     {
         PENDING_PAYMENT,
         PAID,
-        PENDING_INSURANCE // Added for insurance payment scenario
+        PENDING_INSURANCE 
     }
 
 

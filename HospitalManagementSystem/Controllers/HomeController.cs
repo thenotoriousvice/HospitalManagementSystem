@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using HospitalManagementSystem.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization; // Added this using directive
+using Microsoft.AspNetCore.Authorization;
 
 namespace HospitalManagementSystem.Controllers
 {

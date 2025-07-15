@@ -28,15 +28,15 @@ namespace HospitalManagementSystem.Repository.Models
         [StringLength(15)]
         public string ContactNumber { get; set; }
 
-        [Required] // Added Required based on previous Appointment.PatientEmail
+        [Required] 
         [EmailAddress]
-        [StringLength(255)] // Add a reasonable max length for email
-        public string Email { get; set; } // <--- ADD THIS LINE
+        [StringLength(255)] 
+        public string Email { get; set; } 
 
-        [Required] // Added Required based on previous Appointment.PatientPhoneNumber
+        [Required]
         [Phone]
-        [StringLength(20)] // Add a reasonable max length for phone number
-        public string PhoneNumber { get; set; } // <--- ADD THIS LINE
+        [StringLength(20)] 
+        public string PhoneNumber { get; set; } 
 
         [StringLength(255)]
         public string Address { get; set; }

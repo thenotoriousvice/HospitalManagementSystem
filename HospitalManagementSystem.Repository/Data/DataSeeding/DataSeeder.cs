@@ -13,7 +13,7 @@ namespace HospitalManagementSystem.Repository.Data.DataSeeding
     {
         public static async Task SeedDepartmentsAsync(ApplicationDbContext context)
         {
-            // Only seed departments if none exist to prevent duplicates on subsequent runs
+           
             if (!await context.Departments.AnyAsync())
             {
                 var departments = new List<Department>
@@ -34,7 +34,7 @@ namespace HospitalManagementSystem.Repository.Data.DataSeeding
             }
         }
 
-        // You can add other seeding methods here if needed, e.g., for initial roles or an admin user
+
         public static async Task SeedRolesAsync(RoleManager<IdentityRole> roleManager)
         {
             if (!await roleManager.RoleExistsAsync("Doctor"))

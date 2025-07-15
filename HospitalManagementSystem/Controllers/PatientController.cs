@@ -52,7 +52,7 @@ namespace HospitalManagementSystem.Controllers
                     return View(model);
                 }
 
-                // Check if a user with the provided contact number (used as UserName) already exists
+                // Check if a user with the provided contact number  already exists
                 var userByContactNumber = await _userManager.FindByNameAsync(model.ContactNumber);
                 if (userByContactNumber != null)
                 {
@@ -75,7 +75,7 @@ namespace HospitalManagementSystem.Controllers
 
                 try
                 {
-                    // Create patient and get the result
+                    
                     var result = await _patientService.CreatePatientAsync(patient, model.Password);
 
                     if (result.Succeeded)
@@ -90,11 +90,11 @@ namespace HospitalManagementSystem.Controllers
                             var roleResult = await _userManager.AddToRoleAsync(newUser, "Patient");
                             if (!roleResult.Succeeded)
                             {
-                                // Log the error
+                                
                                 var errorMessages = string.Join("\n", roleResult.Errors.Select(e => e.Description));
                                 Console.WriteLine($"Role assignment failed: {errorMessages}");
 
-                                // Add errors to ModelState
+                                
                                 foreach (var error in roleResult.Errors)
                                 {
                                     ModelState.AddModelError(string.Empty, error.Description);
@@ -102,14 +102,13 @@ namespace HospitalManagementSystem.Controllers
                                 return View(model);
                             }
 
-                            // Sign in the user
+                            
                             await _signInManager.SignInAsync(newUser, isPersistent: false);
                             TempData["SuccessMessage"] = "Registration successful! You are now logged in.";
                             return RedirectToAction("MyProfile", "Patient");
                         }
                         else
                         {
-                            // Log the error
                             Console.WriteLine("User registration succeeded but user not found after creation");
                             ModelState.AddModelError(string.Empty, "Registration succeeded but we couldn't log you in. Please try logging in manually.");
                             return View(model);
@@ -117,11 +116,11 @@ namespace HospitalManagementSystem.Controllers
                     }
                     else
                     {
-                        // Log the error
+                        
                         var errorMessages = string.Join("\n", result.Errors.Select(e => e.Description));
                         Console.WriteLine($"Patient creation failed: {errorMessages}");
 
-                        // Add errors to ModelState
+                        
                         foreach (var error in result.Errors)
                         {
                             ModelState.AddModelError(string.Empty, error.Description);
@@ -130,13 +129,13 @@ namespace HospitalManagementSystem.Controllers
                 }
                 catch (Exception ex)
                 {
-                    // Log any unexpected errors
+                   
                     Console.WriteLine($"Unexpected error during registration: {ex.Message}");
                     ModelState.AddModelError(string.Empty, "An unexpected error occurred during registration. Please try again later.");
                 }
             }
 
-            // Return to view with validation errors
+            
             return View(model);
         }
 
@@ -187,10 +186,9 @@ namespace HospitalManagementSystem.Controllers
                             return View(model);
                         }
                     }
-                    // If login failed (e.g., wrong password or locked out)
                     else
                     {
-                        // Sign out any existing user before showing invalid credentials
+                       
                         await _signInManager.SignOutAsync();
                         if (result.IsLockedOut)
                         {
@@ -203,8 +201,7 @@ namespace HospitalManagementSystem.Controllers
                         return View(model);
                     }
                 }
-                // If user is null (not found)
-                // Sign out any existing user before showing invalid credentials
+                
                 await _signInManager.SignOutAsync();
                 ModelState.AddModelError(string.Empty, "Invalid login attempt. Please check your contact number/email and password.");
             }
@@ -232,8 +229,8 @@ namespace HospitalManagementSystem.Controllers
             var patient = await _patientService.GetPatientByUserIdAsync(userId);
             if (patient == null)
             {
-                // Handle case where patient profile is not found, perhaps redirect to create profile
-                return RedirectToAction("CreateProfile"); // Or a suitable error page
+                
+                return RedirectToAction("CreateProfile"); 
             }
 
             var user = await _userManager.FindByIdAsync(userId);
@@ -242,10 +239,10 @@ namespace HospitalManagementSystem.Controllers
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
 
-            // Fetch appointments for the current patient using their patient ID
+            // fetch appointments for the current patient using their patient ID
             var allAppointments = await _appointmentService.GetAppointmentsByPatientIdAsync(patient.PatientId);
 
-            // Filter appointments into upcoming and past
+            
             var upcomingAppointments = allAppointments
                 .Where(a => a.AppointmentDate.Date >= DateTime.Today &&
                              (a.Status == AppointmentStatus.Approved || a.Status == AppointmentStatus.Pending))
@@ -258,7 +255,7 @@ namespace HospitalManagementSystem.Controllers
                              a.Status == AppointmentStatus.Cancelled ||
                              a.Status == AppointmentStatus.Rejected ||
                              a.Status == AppointmentStatus.Completed ||
-                             a.Status == AppointmentStatus.PaymentCompleted) // Include completed, cancelled, rejected as "past"
+                             a.Status == AppointmentStatus.PaymentCompleted) 
                 .OrderByDescending(a => a.AppointmentDate)
                 .ThenByDescending(a => a.AppointmentTime)
                 .ToList();
@@ -450,14 +447,14 @@ namespace HospitalManagementSystem.Controllers
         [HttpGet]
         public IActionResult GetBillDetails(int billId)
         {
-            // Security Check: Ensure the bill belongs to the logged-in patient
+           
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized("User not logged in."); // Or suitable error
+                return Unauthorized("User not logged in."); 
             }
 
-            var patient = _patientService.GetPatientByUserIdAsync(userId).Result; // Synchronous call for simplicity here, consider async if not already awaited
+            var patient = _patientService.GetPatientByUserIdAsync(userId).Result; 
             if (patient == null)
             {
                 return Unauthorized("Patient profile not found.");
@@ -470,13 +467,13 @@ namespace HospitalManagementSystem.Controllers
                 return NotFound("Bill not found.");
             }
 
-            // Crucial Security Check: Verify that the bill's PatientId matches the logged-in patient's PatientId
+            
             if (bill.PatientId != patient.PatientId)
             {
                 return Forbid("You do not have permission to view this bill.");
             }
 
-            // Return specific details needed for the modal as JSON
+            
             return Json(new
             {
                 bill.BillId,
@@ -484,43 +481,23 @@ namespace HospitalManagementSystem.Controllers
                 bill.TotalAmount,
                 bill.BillDate,
                 bill.Status,
-                bill.UploadedFilePath // Include this if you want to display/link to an uploaded document
+                bill.UploadedFilePath 
             });
         }
 
         [HttpGet]
         public async Task<IActionResult> ProcessPayment(int billId)
         {
-            // Security Check: Ensure the bill belongs to the logged-in patient
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    return Unauthorized("User not logged in.");
-            //}
-
-            //var patient = await _patientService.GetPatientByUserIdAsync(userId);
-            //if (patient == null)
-            //{
-            //    TempData["ErrorMessage"] = "Patient profile not found.";
-            //    return RedirectToAction("MyProfile"); // Or redirect to an error page
-            //}
+            
 
             var bill = _billService.GetBillById(billId);
 
             if (bill == null)
             {
                 TempData["ErrorMessage"] = "Bill not found.";
-                return RedirectToAction("MyProfile"); // Or redirect to an error page
+                return RedirectToAction("MyProfile"); 
             }
 
-            //// Crucial Security Check: Verify that the bill's PatientId matches the logged-in patient's PatientId
-            //if (bill.PatientId != patient.PatientId)
-            //{
-            //    TempData["ErrorMessage"] = "You do not have permission to pay this bill.";
-            //    return RedirectToAction("MyProfile"); // Redirect to their own profile/bills list
-            //}
-
-            // You might want to add a check here if the bill is already paid.
             if (bill.Status == BillStatus.PAID)
             {
                 TempData["InfoMessage"] = "This bill has already been paid.";
@@ -532,30 +509,13 @@ namespace HospitalManagementSystem.Controllers
         }
 
 
-        // IMPORTANT: We will also need a [HttpPost] version of ProcessPayment to handle
-        // the actual payment submission (e.g., updating bill status, calling payment gateway).
-        // For now, we are just setting up the GET request to display the form.
-        // We will implement the POST action when we integrate the payment button.
+        
 
         [HttpPost]
-        [ValidateAntiForgeryToken] // Always use for POST requests for security
+        [ValidateAntiForgeryToken] 
         public async Task<IActionResult> ProcessPayment(int billId, string paymentMethod)
         {
-            // This is a placeholder for the POST payment logic.
-            // You will expand this when integrating with a real payment gateway
-            // or when handling internal status updates.
-
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //if (string.IsNullOrEmpty(userId))
-            //{
-            //    return Unauthorized("User not logged in.");
-            //}
-
-            //var patient = await _patientService.GetPatientByUserIdAsync(userId);
-            //if (patient == null)
-            //{
-            //    return BadRequest("Patient profile not found for payment processing.");
-            //}
+           
 
             var bill = _billService.GetBillById(billId);
 
@@ -574,22 +534,13 @@ namespace HospitalManagementSystem.Controllers
                 return BadRequest("This bill has already been paid.");
             }
 
-            // Simulate payment processing and update bill status
-            if (paymentMethod == "Card" || paymentMethod == "Online") // Example payment methods
+          
+            if (paymentMethod == "Card" || paymentMethod == "Online") 
             {
                 bill.Status = BillStatus.PAID;
-                _billService.SaveBill(bill); // Update the bill in the database
+                _billService.SaveBill(bill); 
 
-                // Potentially also update the associated appointment status if applicable
-                // You'd need to link Bill to Appointment, if not already.
-                // For example:
-                // var appointment = await _appointmentService.GetAppointmentByBillIdAsync(bill.BillId);
-                // if (appointment != null)
-                // {
-                //     await _appointmentService.UpdateAppointmentStatusAsync(appointment.Id, AppointmentStatus.PaymentCompleted);
-                // }
-
-                // --- NEW: Update the associated appointment status ---
+               
                 var appointment = await _appointmentService.GetAppointmentByBillIdAsync(bill.BillId); // Assuming GetAppointmentByBillIdAsync exists
                 if (appointment != null)
                 {
@@ -598,12 +549,12 @@ namespace HospitalManagementSystem.Controllers
 
 
                 TempData["SuccessMessage"] = $"Bill {bill.BillId} paid successfully via {paymentMethod}!";
-                return RedirectToAction("MyProfile"); // Redirect back to patient's bills list
+                return RedirectToAction("MyProfile"); 
             }
             else
             {
                 TempData["ErrorMessage"] = "Invalid payment method selected.";
-                return View(bill); // Re-show the payment form with an error
+                return View(bill); 
             }
         }
     }

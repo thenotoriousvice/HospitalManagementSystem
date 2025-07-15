@@ -31,7 +31,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
                 appointment.RequestedAt = DateTime.Now;
                 appointment.Status = AppointmentStatus.Pending;
 
-                // Handle patient details based on whether it's an existing patient
+                // patient details based on whether it's an existing patient
                 if (isExistingPatient)
                 {
                     // If it's an existing patient and PatientId is not already set, try to find them
@@ -48,7 +48,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
                         }
                         else
                         {
-                            // If patient not found, create a new one
+                            // If patient not found, create anew patient
                             var newPatient = new Patient
                             {
                                 Name = appointment.PatientName,
@@ -126,7 +126,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
                         appointment.AppointmentTime.Value < selectedDoctor.WorkingHoursStart.Value ||
                         appointment.AppointmentTime.Value >= selectedDoctor.WorkingHoursEnd.Value)
                     {
-                        return null; // Invalid time slot for this doctor's working hours
+                        return null; // invalid time slot for this doctor's working hours
                     }
 
                     bool isSlotBooked = await _context.Appointments
@@ -198,9 +198,9 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
 
         public async Task<List<Appointment>> GetPatientAppointmentsAsync(string email, string phoneNumber)
         {
-            // Now correctly includes BookedAppointment for the Patient navigation property
+           
             return await _context.Appointments
-                .Include(a => a.Patient) // This will now correctly load BookedAppointment data
+                .Include(a => a.Patient) 
                 .Include(a => a.Doctor)
                 .Include(a => a.Department)
                 .Where(a => a.PatientEmail == email && a.PatientPhoneNumber == phoneNumber)
@@ -209,7 +209,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
                 .ToListAsync();
         }
 
-        // Implementation of the new method
+        
         public async Task<IEnumerable<Appointment>> GetAppointmentsByPatientIdAsync(int patientId)
         {
             return await _context.Appointments
@@ -245,7 +245,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
 
             string formattedAppointmentTime = appointmentToCancel.AppointmentTime.HasValue
                 ? new DateTime().Add(appointmentToCancel.AppointmentTime.Value).ToString("hh:mm tt")
-                : "an unassigned time"; // Provide a fallback
+                : "an unassigned time"; 
 
             await SendAppointmentEmailAsync(
                 appointmentToCancel.PatientEmail,
@@ -262,7 +262,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<IEnumerable<Appointment>> GetAppointmentsForDoctorAsync(int loggedInDoctorId, int? filterDoctorId, int? filterDepartmentId)
         {
             IQueryable<Appointment> query = _context.Appointments
-                .Include(a => a.Patient) // This will now correctly load BookedAppointment data
+                .Include(a => a.Patient) 
                 .Include(a => a.Doctor)
                     .ThenInclude(d => d.IdentityUser)
                 .Include(a => a.Department);
@@ -291,7 +291,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<List<Appointment>> GetPendingAppointmentsForDoctorAsync(int doctorId)
         {
             return await _context.Appointments
-                .Include(a => a.Patient) // This will now correctly load BookedAppointment data
+                .Include(a => a.Patient) 
                 .Include(a => a.Doctor)
                     .ThenInclude(d => d.IdentityUser)
                 .Include(a => a.Department)
@@ -304,7 +304,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<List<Appointment>> GetPendingAppointmentsForDepartmentOnlyAsync(int departmentId)
         {
             return await _context.Appointments
-                .Include(a => a.Patient) // This will now correctly load BookedAppointment data
+                .Include(a => a.Patient) 
                 .Include(a => a.Doctor)
                 .Include(a => a.Department)
                 .Where(a => a.DepartmentId == departmentId && a.DoctorId == null && a.Status == AppointmentStatus.Pending)
@@ -321,7 +321,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<IdentityResult> ApproveAppointmentAsync(int appointmentId, TimeSpan approvedTime)
         {
             var appointmentToApprove = await _context.Appointments
-                .Include(a => a.Patient) // This will now correctly load BookedAppointment data
+                .Include(a => a.Patient) 
                 .Include(a => a.Doctor)
                 .Include(a => a.Department)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
@@ -331,7 +331,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
                 return IdentityResult.Failed(new IdentityError { Description = "Appointment not found or not pending." });
             }
 
-            // Check if the chosen time slot is already booked for this doctor
+            // Checking if the chosen time slot is already booked for this doctor
             bool isSlotBookedForApproval = await _context.Appointments
                 .AnyAsync(a => a.DoctorId == appointmentToApprove.DoctorId &&
                                a.AppointmentDate == appointmentToApprove.AppointmentDate &&
@@ -349,15 +349,15 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
             appointmentToApprove.ApprovedRejectedAt = DateTime.Now;
             _context.Update(appointmentToApprove);
 
-            // Logic to reject other pending appointments for the same patient on the same day that might conflict
+            // reject other pending appointments for the same patient on the same day that might conflict
             var potentialConflictingAppointments = await _context.Appointments
                 .Where(a => a.Id != appointmentToApprove.Id &&
-                            a.PatientId == appointmentToApprove.PatientId && // PatientId now points to BookedAppointment
+                            a.PatientId == appointmentToApprove.PatientId && 
                             a.AppointmentDate == appointmentToApprove.AppointmentDate &&
                             a.Status == AppointmentStatus.Pending)
                 .ToListAsync();
 
-            // Filter for actual time conflicts (e.g., within 60 minutes) - adjust logic as needed
+           
             var conflictingAppointments = potentialConflictingAppointments
                 .Where(a => a.AppointmentTime.HasValue && Math.Abs(a.AppointmentTime.Value.Subtract(approvedTime).TotalMinutes) < 60)
                 .ToList();
@@ -388,7 +388,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<IdentityResult> RejectAppointmentAsync(int appointmentId)
         {
             var appointmentToReject = await _context.Appointments
-                .Include(a => a.Patient) // This will now correctly load BookedAppointment data
+                .Include(a => a.Patient) 
                 .Include(a => a.Doctor)
                 .Include(a => a.Department)
                 .FirstOrDefaultAsync(a => a.Id == appointmentId);
@@ -406,7 +406,7 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
 
             string formattedAppointmentTimeRejected = appointmentToReject.AppointmentTime.HasValue
                 ? new DateTime().Add(appointmentToReject.AppointmentTime.Value).ToString("hh:mm tt")
-                : "an unassigned time"; // Provide a fallback
+                : "an unassigned time"; 
 
             await SendAppointmentEmailAsync(
                 appointmentToReject.PatientEmail,
@@ -423,12 +423,12 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsForDoctorAsync(int doctorId)
         {
             return await _context.Appointments
-                .Include(a => a.Patient)    // Include BookedAppointment details
-                .Include(a => a.Doctor)      // Include doctor details (though it's the current doctor)
-                .Include(a => a.Department)  // Include department details
-                .Where(a => a.DoctorId == doctorId) // Filter by the specific doctor's ID
-                .OrderByDescending(a => a.AppointmentDate) // Order by latest date first
-                .ThenByDescending(a => a.AppointmentTime)  // Then by time
+                .Include(a => a.Patient)    
+                .Include(a => a.Doctor)      
+                .Include(a => a.Department) 
+                .Where(a => a.DoctorId == doctorId) 
+                .OrderByDescending(a => a.AppointmentDate) 
+                .ThenByDescending(a => a.AppointmentTime)  
                 .ToListAsync();
         }
 
@@ -446,60 +446,52 @@ namespace HospitalManagementSystem.BusinessLogic.Implementation
         public async Task<bool> CompleteAppointmentAsync(int appointmentId)
         {
             var appointment = await _context.Appointments
-                                            .Include(a => a.Patient) // Include Patient to potentially use their email later if needed for notifications
+                                            .Include(a => a.Patient) // Include Patient to  use their email later if needed for notifications
                                             .FirstOrDefaultAsync(a => a.Id == appointmentId);
 
             if (appointment == null)
             {
-                // Appointment not found
+                
                 return false;
             }
 
             if (appointment.Status == AppointmentStatus.Approved) // Only complete if currently Approved
             {
                 appointment.Status = AppointmentStatus.Completed;
-                // You might also want to set a CompletionDate here if you add such a property to your Appointment model
-                // appointment.CompletionDate = DateTime.Now;
-
+               
                 _context.Entry(appointment).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
 
-                // Optional: Send a notification to the patient that their appointment is completed
-                // if (appointment.Patient != null && !string.IsNullOrEmpty(appointment.Patient.Email))
-                // {
-                //     await SendAppointmentEmailAsync(appointment.Patient.Email,
-                //         "Appointment Completed",
-                //         $"Dear {appointment.Patient.Name},\n\nYour appointment on {appointment.AppointmentDate.ToShortDateString()} at {appointment.AppointmentTime?.ToString("hh:mm tt")} has been marked as completed.\n\nThank you for choosing our hospital.");
-                // }
+              
 
                 return true;
             }
             else
             {
-                // Appointment is not in a state that can be completed (e.g., Pending, Rejected, Cancelled, already Completed)
+               
                 return false;
             }
         }
 
-        public async Task<Appointment?> GetAppointmentByBillIdAsync(int billId) // Add nullable return type
+        public async Task<Appointment?> GetAppointmentByBillIdAsync(int billId) 
         {
-            // Ensure nullability is handled explicitly
+            
             return await _context.Appointments
                                  .Include(a => a.Bill)
                                  .FirstOrDefaultAsync(a => a.Bill != null && a.Bill.BillId == billId);
         }
 
-        // Implementation of the new method to get all appointments
+       
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsAsync() //
         {
             return await _context.Appointments
                 .Include(a => a.Patient)
                 .Include(a => a.Doctor)
-                    .ThenInclude(d => d.Department) // Include doctor's department if needed for display
-                .Include(a => a.Department) // Include appointment's department
-                .Include(a => a.Bill)       // Include bill information
-                .OrderByDescending(a => a.AppointmentDate) // Order by latest date first
-                .ThenByDescending(a => a.AppointmentTime)  // Then by time
+                    .ThenInclude(d => d.Department) 
+                .Include(a => a.Department) 
+                .Include(a => a.Bill)       
+                .OrderByDescending(a => a.AppointmentDate) 
+                .ThenByDescending(a => a.AppointmentTime)  
                 .ToListAsync();
         }
 

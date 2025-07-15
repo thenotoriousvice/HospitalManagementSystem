@@ -11,9 +11,9 @@ namespace HospitalManagementSystem.BusinessLogic.Interfaces
         Task<Doctor?> GetDoctorProfileByUserIdAsync(string userId);
         Task<IdentityUser?> GetIdentityUserByEmailAsync(string email);
         Task<IdentityUser?> GetCurrentUserAsync();
-        // Change the method signature
+      
         Task<IdentityResult> UpdateDoctorProfileAsync(EditProfileViewModel model, string userId);
-        Task<IEnumerable<Department>> GetAllDepartmentsAsync(); // For registration/edit profile forms
+        Task<IEnumerable<Department>> GetAllDepartmentsAsync(); 
         Task<bool> CreateDoctorProfileAsync(Doctor doctorProfile);
 
         Task<IEnumerable<Doctor>> GetAllDoctorsAsync();

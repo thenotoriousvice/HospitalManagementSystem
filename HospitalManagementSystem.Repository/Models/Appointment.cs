@@ -8,8 +8,8 @@ namespace HospitalManagementSystem.Repository.Models
         Approved,
         Rejected,
         Cancelled,
-        Completed, // Ensure 'Completed' is present as recommended
-        PaymentPending, // New status: Bill has been uploaded, awaiting patient payment
+        Completed, 
+        PaymentPending, 
         PaymentCompleted
     }
 
@@ -28,20 +28,19 @@ namespace HospitalManagementSystem.Repository.Models
 
         [Required]
         [StringLength(100)]
-        public string PatientName { get; set; } // Consider removing if always populated from Patient.Name
+        public string PatientName { get; set; }
 
         [Required]
         [EmailAddress]
-        public string PatientEmail { get; set; } // Consider removing if always populated from Patient.Email
-
+        public string PatientEmail { get; set; } 
         [Required]
         [Phone]
-        public string PatientPhoneNumber { get; set; } // Consider removing if always populated from Patient.PhoneNumber
+        public string PatientPhoneNumber { get; set; } 
 
         public int? PatientId { get; set; }
 
-        // CRITICAL FIX: This MUST be Patient? not BookedAppointment?
-        public Patient? Patient { get; set; } // <--- CORRECTED THIS LINE
+        
+        public Patient? Patient { get; set; } 
 
         public int? DoctorId { get; set; }
         public Doctor? Doctor { get; set; }
@@ -55,10 +54,10 @@ namespace HospitalManagementSystem.Repository.Models
 
         public DateTime RequestedAt { get; set; }
 
-        // NEW FIX: Add this property as it's missing but referenced in your code
-        public DateTime? ApprovedRejectedAt { get; set; } // <--- ADD THIS LINE (make it nullable if not always set)
 
-        // --- NEW: Add navigation property for Bill ---
+        public DateTime? ApprovedRejectedAt { get; set; } 
+
+       
         public Bill? Bill { get; set; }
     }
 }

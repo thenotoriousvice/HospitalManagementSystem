@@ -4,7 +4,7 @@ namespace HospitalManagementSystem.ViewModels
 {
     public class PatientUpdateViewModel
     {
-        public int PatientId { get; set; } // Hidden field for ID
+        public int PatientId { get; set; } 
 
         [Required(ErrorMessage = "Name is required.")]
         [StringLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
